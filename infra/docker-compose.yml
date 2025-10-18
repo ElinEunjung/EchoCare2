@@ -1,0 +1,104 @@
+#TODO: Add application-docker.yml for each service (src/main/resource)
+#application-docker.yml defines url that going to be used "inside container"
+
+version: "3.9"
+
+services:
+  # --- Infra ---
+  postgres:
+    image: postgres:16
+    container_name: echocare-postgres
+    environment:
+      POSTGRES_USER: echocare
+      POSTGRES_PASSWORD: echocare
+      POSTGRES_DB: echocare
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U echocare -d echocare"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: echocare-rabbitmq
+    ports:
+      - "5672:5672"    # AMQP
+      - "15672:15672"  # Management UI
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+#  # --- Services ---
+#  user-profile-service:
+#    build:
+#      context: ../services/user-profile-service
+#    container_name: user-profile-service
+#    environment:
+#      # Spring profile (optional, still using single application.yml)
+#      SPRING_PROFILES_ACTIVE: docker
+#
+#      # DB (env overrides used by application.yml placeholders)
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/echocare
+#      SPRING_DATASOURCE_USERNAME: echocare
+#      SPRING_DATASOURCE_PASSWORD: echocare
+#      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+#
+#      # RabbitMQ
+#      SPRING_RABBITMQ_HOST: rabbitmq
+#      SPRING_RABBITMQ_PORT: 5672
+#    ports:
+#      - "8081:8080"   # host:container
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
+#      rabbitmq:
+#        condition: service_healthy
+#
+#  playlist-service:
+#    build:
+#      context: ../services/playlist-service
+#    container_name: playlist-service
+#    environment:
+#      SPRING_PROFILES_ACTIVE: docker
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/echocare
+#      SPRING_DATASOURCE_USERNAME: echocare
+#      SPRING_DATASOURCE_PASSWORD: echocare
+#      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+#      SPRING_RABBITMQ_HOST: rabbitmq
+#      SPRING_RABBITMQ_PORT: 5672
+#    ports:
+#      - "8082:8080"
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
+#      rabbitmq:
+#        condition: service_healthy
+#
+#  feedback-service:
+#    build:
+#      context: ../services/feedback-service
+#    container_name: feedback-service
+#    environment:
+#      SPRING_PROFILES_ACTIVE: docker
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/echocare
+#      SPRING_DATASOURCE_USERNAME: echocare
+#      SPRING_DATASOURCE_PASSWORD: echocare
+#      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+#      SPRING_RABBITMQ_HOST: rabbitmq
+#      SPRING_RABBITMQ_PORT: 5672
+#    ports:
+#      - "8083:8080"
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
+#      rabbitmq:
+#        condition: service_healthy
+
+volumes:
+  pgdata:
