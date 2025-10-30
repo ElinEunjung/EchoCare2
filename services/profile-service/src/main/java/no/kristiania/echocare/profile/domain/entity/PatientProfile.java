@@ -24,15 +24,20 @@ public class PatientProfile {
     @Column(name = "patient_name", nullable = false)
     private String patientName;
 
-    @Embedded
-    private MusicPreference MusicPreference;
-
     @Column(name = "symptoms", nullable = false)
     private String symptoms;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "stage", nullable = false)
     private DementiaStage stage;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "era",              column = @Column(name = "music_era",              nullable = false)),
+            @AttributeOverride(name = "favoriteArtists",  column = @Column(name = "music_favorite_artists", nullable = false)),
+            @AttributeOverride(name = "favoriteGenres",   column = @Column(name = "music_favorite_genres",  nullable = false))
+    })
+    private MusicPreference MusicPreference;
 }
 
 //TODO: Include disliked songs, caregiver ID in the Entity later
