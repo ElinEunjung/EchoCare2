@@ -25,7 +25,7 @@ EchoCare helps caregivers provide personalized music therapy for people living w
 # Project Structure
 ```
 echocare/
-├── docs/
+├── frontend/         
 ├── services/
 │   ├── profile-service/       ← module
 │   ├── playlist-service/      ← module
@@ -33,6 +33,7 @@ echocare/
 │
 ├── gateway/                  ← module
 ├── infra/                    ← module (docker-compose, RabbitMQ configs, etc.)
+├── docs/
 └── pom.xml                   ← parent POM
 
 ```
