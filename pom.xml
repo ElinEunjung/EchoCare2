@@ -8,8 +8,10 @@
     <version>0.1.0</version>
     <packaging>pom</packaging>
 
+
     <modules>
-        <module>services/user-profile-service</module>
+    <!--TODO: add  <module>gateway</module> later -->
+        <module>services/profile-service</module>
         <module>services/playlist-service</module>
         <module>services/feedback-service</module>
     </modules>
