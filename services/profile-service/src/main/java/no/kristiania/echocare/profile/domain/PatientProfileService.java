@@ -24,7 +24,7 @@ public class PatientProfileService {
         profile.setMusicPreference(new MusicPreference(
                 req.era(),
                 req.favoriteArtists(),
-                req.favoriteArtists()
+                req.favoriteGenres()
         ));
         profile.setSymptoms(req.symptoms());
         profile.setStage(req.stage());
