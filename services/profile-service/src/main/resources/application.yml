@@ -1,15 +1,18 @@
 spring:
   application:
     name: profile-service
-
   datasource:
-    url: jdbc:h2:mem:profiledb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:postgresql://localhost:5432/profile_db
+    username: postgres
+    password: pirate
 
   jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+   hibernate:
+    ddl-auto: update
+   properties:
+     hibernate:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+   show-sql: true
 
+server:
+  port: 8081

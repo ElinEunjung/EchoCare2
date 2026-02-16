@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: feedback-service   # unique per service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/feedback_db
+    username: feedback_user
+    password: feedback_pass
+
+server:
+  port: 8083
+

@@ -1,4 +1,4 @@
-package no.kristiania.echocare.profile.api.dto.requests;
+package no.kristiania.echocare.profile.api.dto.response;
 
 import no.kristiania.echocare.profile.domain.value.DementiaStage;
 

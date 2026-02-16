@@ -2,7 +2,7 @@ package no.kristiania.echocare.profile.domain;
 
 import lombok.RequiredArgsConstructor;
 import no.kristiania.echocare.profile.api.dto.requests.CreatePatientProfileRequest;
-import no.kristiania.echocare.profile.api.dto.requests.PatientProfileResponse;
+import no.kristiania.echocare.profile.api.dto.response.PatientProfileResponse;
 import no.kristiania.echocare.profile.domain.entity.PatientProfile;
 import no.kristiania.echocare.profile.domain.value.MusicPreference;
 import no.kristiania.echocare.profile.repository.PatientProfileRepo;

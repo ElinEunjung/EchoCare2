@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: playlist-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/playlist_db
+    username: playlist_user
+    password: playlist_pass
+
+server:
+  port: 8082
+  servlet:
+    context-path: /playlist
+
