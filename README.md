@@ -78,6 +78,6 @@ MIT Licence
 - [Garrido, S., Dunne, L., Chang, E., Perz, J., Stevens, C. J., Haertsch, M. “Music playlists for people with dementia.” BMC Geriatrics, 2021.](https://pmc.ncbi.nlm.nih.gov/articles/PMC10455001/)
 
 # 11. AI usage
-- Github Copilot (GPT 4o): readme.md, documentation, boilerplate code, code snippets, 
-project structure, architecture design, user stories, feature list etc.
+- Github Copilot (Auto): readme.md, documentation, boilerplate code, code snippets, 
+project structure, architecture design, user stories, feature list, commit message format, etc.
 
