@@ -13,6 +13,32 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    listener:
+      simple:
+        acknowledge-mode: auto
+        prefetch: 1
+        retry:
+          enabled: true
+          initial-interval: 1000
+          max-attempts: 3
+          multiplier: 2.0
+
+# Custom properties for exchanges and queues
+rabbitmq:
+  exchange:
+    profile: profile.exchange
+  queue:
+    profile-created: profile.created.queue
+    profile-updated: profile.updated.queue
+  routing-key:
+    profile-created: profile.created
+    profile-updated: profile.updated
 
 server:
   port: 8081

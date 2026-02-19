@@ -16,10 +16,40 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
 
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    listener:
+      simple:
+        acknowledge-mode: auto
+        prefetch: 1
+        retry:
+          enabled: true
+          initial-interval: 1000
+          max-attempts: 3
+          multiplier: 2.0
+
+rabbitmq:
+  exchange:
+    profile: profile.exchange # Subscribes to profile events
+    feedback: feedback.exchange # Subscribes to feedback events
+  queue:
+    profile-events: playlist.profile-events.queue # Own queue for profile events
+    feedback-events: playlist.feedback-events.queue # Own queue for feedback events
+  routing-key:
+    profile-created: profile.created
+    profile-updated: profile.updated
+    feedback-submitted: feedback.submitted
+
+
 server:
   port: 8082
   servlet:
     context-path: /playlist
+
 
 jwt:
   secret: WOwTER+0vZAxLEr3LtLzJY1Y77gWWnnuQeUrvvTA9ZKvH47wGBwv1kJ+ghqrn7basSlRTQjjXNsaMJdZNbQRIw==
