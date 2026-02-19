@@ -54,8 +54,17 @@ services:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
     ports:
-      - "5672:5672"   # AMQP port
-      - "15672:15672" # Management UI
+      - "5672:5672"   # AMQP port (for services to connect)
+      - "15672:15672" # Management UI (for monitoring)
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+      - rabbitmq-logs:/var/log/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
     networks:
       - echocare-network
 
@@ -63,6 +72,8 @@ volumes:
   profile-data:
   playlist-data:
   feedback-data:
+  rabbitmq-data:
+  rabbitmq-logs:
 
 networks:
   echocare-network:
