@@ -36,6 +36,12 @@ public class RabbitMQConfig {
         return new TopicExchange(profileExchange);
     }
 
+
+    @Bean
+    public Queue profileCreatedQueue() {
+        return new Queue(profileCreatedQueue, true); // durable = true
+    }
+
     @Bean
     public Queue profileUpdatedQueue() {
         return new Queue(profileUpdatedQueue, true); // durable = true
@@ -61,6 +67,7 @@ public class RabbitMQConfig {
     public MessageConverter jsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
     }
+
 
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {

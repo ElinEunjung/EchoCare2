@@ -22,6 +22,9 @@ public class Song {
     @Column(name = "genre", nullable = false)
     private String genre;
 
+    @Column(name = "bpm")
+    private Integer bpm; // beats per minute, optional but can be useful for matching energy levels
+
     @Column(name = "release_year", nullable = false)
     private Integer releaseYear;
 

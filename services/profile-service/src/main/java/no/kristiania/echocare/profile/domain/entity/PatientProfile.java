@@ -38,7 +38,7 @@ public class PatientProfile {
     private List<MusicPreference> musicPreferences;
 
     @ElementCollection
-    @CollectionTable(name = "symtoms", joinColumns = @JoinColumn(name = "patient_profile_id"))
+    @CollectionTable(name = "symptoms", joinColumns = @JoinColumn(name = "patient_profile_id"))
     @Column(name = "symptom", nullable = false)
     private List<String> symptoms;
 
