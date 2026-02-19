@@ -1,10 +1,9 @@
 package no.kristiania.echocare.profile.api;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import no.kristiania.echocare.profile.api.dto.requests.CreatePatientProfileRequest;
 import no.kristiania.echocare.profile.api.dto.response.PatientProfileResponse;
-import no.kristiania.echocare.profile.domain.PatientProfileService;
+import no.kristiania.echocare.profile.service.PatientProfileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,24 +17,8 @@ public class PatientProfileController {
     private final PatientProfileService service;
 
     public PatientProfileController(PatientProfileService service) {
-
         this.service = service;
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public PatientProfileResponse create(@Valid @RequestBody CreatePatientProfileRequest req) {
-        return service.create(req);
-    }
-
-    @GetMapping("/{id}")
-    public PatientProfileResponse get(@PathVariable UUID id) {
-        return service.get(id);
-    }
-
-    @GetMapping
-    public List<PatientProfileResponse> getAll() {
-        return service.getAll();
-    }
 }
 

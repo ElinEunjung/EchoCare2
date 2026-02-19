@@ -15,8 +15,5 @@ public class PlaylistController {
 
     private final PlaylistGeneratorService service;
 
-    public PlaylistResponse generate(@RequestBody GeneratePlaylistRequest req) {
-        return service.generate(req);
-    }
 
 }

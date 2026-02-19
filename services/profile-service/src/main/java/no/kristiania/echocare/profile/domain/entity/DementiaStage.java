@@ -1,4 +1,4 @@
-package no.kristiania.echocare.profile.domain.value;
+package no.kristiania.echocare.profile.domain.entity;
 
 public enum DementiaStage {
     MILD,

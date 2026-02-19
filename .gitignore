@@ -1,2 +1,5 @@
 /.idea/
 /CLAUDE.md
+.env
+/.vscode/
+/.copilot/

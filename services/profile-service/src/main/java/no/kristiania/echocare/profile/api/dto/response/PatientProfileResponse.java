@@ -1,6 +1,6 @@
 package no.kristiania.echocare.profile.api.dto.response;
 
-import no.kristiania.echocare.profile.domain.value.DementiaStage;
+import no.kristiania.echocare.profile.domain.entity.DementiaStage;
 
 import java.util.List;
 import java.util.UUID;

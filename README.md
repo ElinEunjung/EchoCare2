@@ -32,7 +32,6 @@ echocare/
 │   ├── feedback-service/      ← module
 │
 ├── gateway/                  ← module
-├── infra/                    ← module (docker-compose, RabbitMQ configs, etc.)
 ├── docs/
 └── pom.xml                   ← parent POM
 

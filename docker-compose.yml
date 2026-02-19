@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  # PostgreSQL for Profile Service
+  profile-db:
+    image: postgres:15-alpine
+    container_name: echocare-profile-db
+    environment:
+      POSTGRES_DB: profile_db
+      POSTGRES_USER: profile_user
+      POSTGRES_PASSWORD: profile_pass
+    ports:
+      - "5435:5432"  # Changed from 5432 to avoid conflict with local PostgreSQL
+    volumes:
+      - profile-data:/var/lib/postgresql/data
+    networks:
+      - echocare-network
+
+  # PostgreSQL for Playlist Service
+  playlist-db:
+    image: postgres:15-alpine
+    container_name: echocare-playlist-db
+    environment:
+      POSTGRES_DB: playlist_db
+      POSTGRES_USER: playlist_user
+      POSTGRES_PASSWORD: playlist_pass
+    ports:
+      - "5433:5432"  # Different host port!
+    volumes:
+      - playlist-data:/var/lib/postgresql/data
+    networks:
+      - echocare-network
+
+  # PostgreSQL for Feedback Service
+  feedback-db:
+    image: postgres:15-alpine
+    container_name: echocare-feedback-db
+    environment:
+      POSTGRES_DB: feedback_db
+      POSTGRES_USER: feedback_user
+      POSTGRES_PASSWORD: feedback_pass
+    ports:
+      - "5434:5432"  # Different host port!
+    volumes:
+      - feedback-data:/var/lib/postgresql/data
+    networks:
+      - echocare-network
+
+  # RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: echocare-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"   # AMQP port
+      - "15672:15672" # Management UI
+    networks:
+      - echocare-network
+
+volumes:
+  profile-data:
+  playlist-data:
+  feedback-data:
+
+networks:
+  echocare-network:
+    driver: bridge
