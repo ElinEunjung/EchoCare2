@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * REST Controller for Patient Profile operations
@@ -24,12 +25,6 @@ public class PatientProfileController {
 
     private final PatientProfileService profileService;
 
-    /**
-     * Create a new patient profile
-     *
-     * @param request the patient profile data
-     * @return the created profile with HTTP 201 status
-     */
     @PostMapping
     public ResponseEntity<PatientProfileResponse> createProfile(@Valid @RequestBody CreatePatientProfileRequest request) {
         // Service layer handles both saving and event publishing
@@ -37,6 +32,13 @@ public class PatientProfileController {
 
         PatientProfileResponse response = mapToResponse(profile);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PatientProfileResponse> getProfile(@PathVariable UUID id) {
+        PatientProfile profile = profileService.getProfileById(id);
+        PatientProfileResponse response = mapToResponse(profile);
+        return ResponseEntity.ok(response);
     }
 
     /**

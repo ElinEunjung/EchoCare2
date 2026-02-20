@@ -1,0 +1,22 @@
+{
+  "patientName": "Bob Williams",
+  "birthYear": 1950,
+  "eraStart": 1965,
+  "eraEnd": 1975,
+  "musicPreferences": [
+    {
+      "artist": "ABBA",
+      "genre": "Disco",
+      "preferenceLevel": "HIGH"
+    },
+    {
+      "artist": "Bee Gees",
+      "genre": "Pop",
+      "preferenceLevel": "HIGH"
+    }
+  ],
+  "symptoms": ["mild_forgetfulness"],
+  "dementiaStage": "EARLY",
+  "caregiverId": "550e8400-e29b-41d4-a716-446655440000"
+}
+
