@@ -21,10 +21,10 @@ public class FeedbackEventConsumer {
 
     @RabbitListener(queues = "${rabbitmq.queue.feedback-events}")
     public void handleFeedbackEvent(FeedbackEventDTO event) {
-        log.info("Received feedback event: type={}, feedbackId={}, playlistId={}",
+        log.info("Received feedback event: type={}, feedbackId={}, patientProfileId={}",
             event.getEventType(),
             event.getFeedbackId(),
-            event.getPlaylistId());
+            event.getPatientProfileId());
 
         try {
             switch (event.getEventType()) {
@@ -43,16 +43,12 @@ public class FeedbackEventConsumer {
      //TODO: Implement feedback processing and playlist recommendation adjustment
 
     private void handleFeedbackSubmitted(FeedbackEventDTO event) {
-        log.info("Processing SUBMITTED feedback for playlist: {}", event.getPlaylistId());
-        log.debug("Feedback details - Liked: {}, Rating: {}, Situation: {}, PatientId: {}",
-            event.getLiked(),
-            event.getRating(),
-            event.getSituation(),
+        log.info("Processing SUBMITTED feedback: feedbackId={}, patientProfileId={}",
+            event.getFeedbackId(),
             event.getPatientProfileId());
 
-        if (event.getSongId() != null) {
-            log.debug("Feedback for specific song: {}", event.getSongId());
-        }
+        // TODO: Fetch full feedback details via Feedback Service API if needed for processing
+        // Example: FeedbackDTO fullFeedback = feedbackServiceClient.getFeedbackById(event.getFeedbackId());
 
         // TODO: Process feedback and adjust future recommendations
         // This could include:

@@ -1,4 +1,4 @@
-package no.kristiania.echocare.playlist.api;
+package no.kristiania.echocare.playlist.api.controller;
 
 import lombok.RequiredArgsConstructor;
 import no.kristiania.echocare.playlist.service.PlaylistGeneratorService;

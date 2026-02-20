@@ -1,4 +1,4 @@
-package no.kristiania.echocare.playlist.api.response;
+package no.kristiania.echocare.playlist.api.dto.response;
 
 import no.kristiania.echocare.playlist.api.dto.TrackDto;
 

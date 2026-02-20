@@ -2,12 +2,15 @@ package no.kristiania.echocare.profile.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import no.kristiania.echocare.profile.api.dto.requests.CreatePatientProfileRequest;
 
 import java.util.*;
 
 @Entity
 @Table(name = "patient_profiles")
 @Data
+@NoArgsConstructor
 public class PatientProfile {
 
     @Id
@@ -34,12 +37,31 @@ public class PatientProfile {
     @JoinColumn(name = "caregiver_id", nullable = false)
     private Caregiver caregiver;
 
-    @OneToMany(mappedBy = "patientProfile", cascade = CascadeType.ALL)
-    private List<MusicPreference> musicPreferences;
+    @OneToMany(mappedBy = "patientProfile", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MusicPreference> musicPreferences = new ArrayList<>();
 
     @ElementCollection
     @CollectionTable(name = "symptoms", joinColumns = @JoinColumn(name = "patient_profile_id"))
     @Column(name = "symptom", nullable = false)
-    private List<String> symptoms;
+    private List<String> symptoms = new ArrayList<>();
+
+    /**
+     * Constructor to convert from CreatePatientProfileRequest
+     * Note: Caregiver must be set separately after fetching from repository
+     */
+    public PatientProfile(CreatePatientProfileRequest request) {
+        this.patientName = request.patientName();
+        this.birthYear = request.birthYear();
+
+        // Parse era string "1965-1975" into eraStart and eraEnd
+        String[] eraParts = request.era().split("-");
+        this.eraStart = Integer.parseInt(eraParts[0].trim());
+        this.eraEnd = Integer.parseInt(eraParts[1].trim());
+
+        this.dementiaStage = request.stage();
+        this.symptoms = new ArrayList<>(request.symptoms());
+
+        // Note: caregiver and musicPreferences need to be set in the service layer
+    }
 
 }

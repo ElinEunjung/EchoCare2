@@ -10,6 +10,7 @@ import java.util.UUID;
 /**
  * Event DTO for receiving Feedback-related events from RabbitMQ
  * Consumed from feedback.submitted events
+ * Contains only essential identifiers - fetch full details via Feedback API if needed
  */
 @Data
 @AllArgsConstructor
@@ -19,20 +20,11 @@ public class FeedbackEventDTO {
 
     private UUID feedbackId;
 
-    private UUID playlistId;
-
-    private UUID songId;
-
     private UUID patientProfileId;
 
-    private Boolean liked;
-
-    private Integer rating;
-
-    private String situation;
-
-    private String eventType; // "SUBMITTED"
+    private String eventType; // "SUBMITTED", "UPDATED", etc.
 
     private LocalDateTime timestamp;
+
 }
 

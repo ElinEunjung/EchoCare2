@@ -1,4 +1,4 @@
-package no.kristiania.echocare.playlist.api.request;
+package no.kristiania.echocare.playlist.api.dto.request;
 
 
 

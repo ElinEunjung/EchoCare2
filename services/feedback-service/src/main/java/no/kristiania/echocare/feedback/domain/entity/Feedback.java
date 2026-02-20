@@ -2,12 +2,16 @@ package no.kristiania.echocare.feedback.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import no.kristiania.echocare.feedback.api.dto.request.CreateFeedbackRequest;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
 @Entity
 @Table(name = "feedback_entries")
 @Data
+@NoArgsConstructor
 public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -31,13 +35,13 @@ public class Feedback {
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
-        public Feedback(UUID id, UUID playlistId, UUID songId, UUID patientProfileId, Boolean liked, Integer rating, String situation) {
-            this.id = id;
-            this.playlistId = playlistId;
-            this.songId = songId;
-            this.patientProfileId = patientProfileId;
-            this.liked = liked;
-            this.rating = rating;
-            this.situation = situation;
-        }
+    // Constructor to convert from CreateFeedbackRequest
+    public Feedback(CreateFeedbackRequest request) {
+        this.playlistId = request.getPlaylistId();
+        this.songId = request.getSongId();
+        this.patientProfileId = request.getPatientProfileId();
+        this.liked = request.getLiked();
+        this.rating = request.getRating();
+        this.situation = request.getSituation();
+    }
 }
