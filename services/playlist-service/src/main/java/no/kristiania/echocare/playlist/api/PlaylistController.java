@@ -1,10 +1,7 @@
 package no.kristiania.echocare.playlist.api;
 
 import lombok.RequiredArgsConstructor;
-import no.kristiania.echocare.playlist.api.request.GeneratePlaylistRequest;
-import no.kristiania.echocare.playlist.api.response.PlaylistResponse;
-import no.kristiania.echocare.playlist.domain.PlaylistGeneratorService;
-import org.springframework.web.bind.annotation.RequestBody;
+import no.kristiania.echocare.playlist.service.PlaylistGeneratorService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

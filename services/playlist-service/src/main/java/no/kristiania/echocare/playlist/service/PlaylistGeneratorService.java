@@ -1,15 +1,8 @@
-package no.kristiania.echocare.playlist.domain;
+package no.kristiania.echocare.playlist.service;
 
 import lombok.RequiredArgsConstructor;
-import no.kristiania.echocare.playlist.api.dto.TrackDto;
-import no.kristiania.echocare.playlist.api.request.GeneratePlaylistRequest;
-import no.kristiania.echocare.playlist.api.response.PlaylistResponse;
 import no.kristiania.echocare.playlist.integration.ProfileClient;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
