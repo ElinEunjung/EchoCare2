@@ -1,0 +1,15 @@
+package no.kristiania.echocare.profile.repository;
+
+import no.kristiania.echocare.profile.domain.entity.Caregiver;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+import java.util.UUID;
+
+@Repository
+public interface CaregiverRepository extends JpaRepository<Caregiver, UUID> {
+    Optional<Caregiver> findByUsername(String username);
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
+}

@@ -8,11 +8,11 @@ import java.util.Map;
 import java.util.UUID;
 
 @Component
-public class ProfileClient {
+public class ProfileServiceClient {
 
     private final RestClient rest;
 
-    public ProfileClient(@Value("${profile.service.url:http://localhost:8081}") String profileServiceUrl) {
+    public ProfileServiceClient(@Value("${profile.service.url:http://localhost:8081}") String profileServiceUrl) {
         this.rest = RestClient.builder()
                 .baseUrl(profileServiceUrl)
                 .build();

@@ -43,8 +43,8 @@ public class ProfileEventPublisher {
                 event
             );
 
-            log.info("Published profile created event: profileId={}, patientName={}, caregiverId={}",
-                event.getProfileId(), event.getPatientName(), event.getCaregiverId());
+            log.info("Published profile created event: profileId={}, patientName={}",
+                event.getProfileId(), event.getPatientName());
         } catch (Exception e) {
             log.error("Failed to publish profile created event for profileId={}", profile.getId(), e);
         }
@@ -60,8 +60,8 @@ public class ProfileEventPublisher {
                 event
             );
 
-            log.info("Published profile updated event: profileId={}, patientName={}, caregiverId={}",
-                event.getProfileId(), event.getPatientName(), event.getCaregiverId());
+            log.info("Published profile updated event: profileId={}, patientName={}",
+                event.getProfileId(), event.getPatientName());
         } catch (Exception e) {
             log.error("Failed to publish profile updated event for profileId={}", profile.getId(), e);
         }
@@ -71,25 +71,9 @@ public class ProfileEventPublisher {
         ProfileEventDTO event = new ProfileEventDTO();
         event.setProfileId(profile.getId());
         event.setPatientName(profile.getPatientName());
-        event.setBirthYear(profile.getBirthYear());
-        event.setEraStart(profile.getEraStart());
-        event.setEraEnd(profile.getEraEnd());
+        event.setEra(profile.getEra());
         event.setDementiaStage(profile.getDementiaStage());
-        event.setCaregiverId(profile.getCaregiver() != null ? profile.getCaregiver().getId() : null);
 
-        // Map music preferences to DTOs
-        if (profile.getMusicPreferences() != null) {
-            event.setMusicPreferences(
-                profile.getMusicPreferences().stream()
-                    .map(pref -> new ProfileEventDTO.MusicPreferenceEventDTO(
-                        pref.getId(),
-                        pref.getArtist(),
-                        pref.getGenre(),
-                        pref.getPreferenceLevel()
-                    ))
-                    .toList()
-            );
-        }
 
         // Map symptoms (already a List<String>)
         event.setSymptoms(profile.getSymptoms());

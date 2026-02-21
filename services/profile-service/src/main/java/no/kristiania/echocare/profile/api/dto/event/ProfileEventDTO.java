@@ -3,7 +3,6 @@ package no.kristiania.echocare.profile.api.dto.event;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import no.kristiania.echocare.profile.domain.entity.DementiaStage;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,17 +21,11 @@ public class ProfileEventDTO {
 
     private String patientName;
 
-    private Integer birthYear;
+    private String era;
 
-    private Integer eraStart;
+    private String dementiaStage;
 
-    private Integer eraEnd;
-
-    private DementiaStage dementiaStage;
-
-    private UUID caregiverId;
-
-    private List<MusicPreferenceEventDTO> musicPreferences;
+    private List<String> favoriteArtists; // Comma-separated string of favorite artists
 
     private List<String> symptoms;
 
@@ -40,17 +33,5 @@ public class ProfileEventDTO {
 
     private LocalDateTime timestamp;
 
-    /**
-     * Nested DTO for music preferences in events
-     */
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class MusicPreferenceEventDTO {
-        private UUID id;
-        private String artist;
-        private String genre;
-        private Integer preferenceLevel;
-    }
 }
 

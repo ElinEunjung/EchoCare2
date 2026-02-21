@@ -17,28 +17,23 @@ public class PatientProfile {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "patient_name", nullable = false)
+    @Column(nullable = false)
     private String patientName;
 
-    @Column(name = "birth_year", nullable = false)
-    private Integer birthYear;
+    @Column(nullable = false)
+    private String era;  // Format: "1965-1975". Validation can be added in service layer to ensure correct format.
 
-    @Column(name = "era_start", nullable = false) // e.g., 1965
-    private Integer eraStart;
-
-    @Column(name = "era_end", nullable = false) // e.g., 1975
-    private Integer eraEnd;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "dementia_stage", nullable = false)
-    private DementiaStage dementiaStage;
+    @Column(name = "dementia_stage")
+    private String dementiaStage; // e.g., "mild", "moderate", "severe"
 
     @ManyToOne
-    @JoinColumn(name = "caregiver_id", nullable = false)
+    @JoinColumn(name = "caregiver_id")  // Made nullable for MVP demo
     private Caregiver caregiver;
 
-    @OneToMany(mappedBy = "patientProfile", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MusicPreference> musicPreferences = new ArrayList<>();
+    @ElementCollection
+    @CollectionTable(name = "favorite_artists", joinColumns = @JoinColumn(name = "patient_profile_id"))
+    @Column(name = "artist")
+    private List<String> favoriteArtists = new ArrayList<>();
 
     @ElementCollection
     @CollectionTable(name = "symptoms", joinColumns = @JoinColumn(name = "patient_profile_id"))
@@ -51,17 +46,14 @@ public class PatientProfile {
      */
     public PatientProfile(CreatePatientProfileRequest request) {
         this.patientName = request.patientName();
-        this.birthYear = request.birthYear();
+        this.era = request.era();
+        this.dementiaStage = request.dementiaStage();
+        this.symptoms = request.symptoms();
 
-        // Parse era string "1965-1975" into eraStart and eraEnd
-        String[] eraParts = request.era().split("-");
-        this.eraStart = Integer.parseInt(eraParts[0].trim());
-        this.eraEnd = Integer.parseInt(eraParts[1].trim());
+        // Initialize favoriteArtists from request
+        if (request.favoriteArtists() != null) {
+            this.favoriteArtists = new ArrayList<>(request.favoriteArtists());
+        }
 
-        this.dementiaStage = request.stage();
-        this.symptoms = new ArrayList<>(request.symptoms());
-
-        // Note: caregiver and musicPreferences need to be set in the service layer
     }
-
 }
