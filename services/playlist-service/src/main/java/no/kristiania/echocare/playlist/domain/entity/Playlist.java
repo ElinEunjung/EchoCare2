@@ -20,8 +20,8 @@ public class Playlist {
     @Column(name = "patient_profile_id", nullable = false)
     private UUID patientProfileId;
 
-    @Column(name = "situation", nullable = false)
-    private String situation; // reduce stress, support activity, calm agitation, ease depression, ease anxiety
+    @Column(name = "care_need", nullable = false)
+    private String careNeed; // reduce stress, support activity, calm agitation, ease depression, ease anxiety
 
 
     @Column(name = "dementia_stage")
@@ -39,10 +39,10 @@ public class Playlist {
     private LocalDateTime createdAt = LocalDateTime.now();
 
 
-     public Playlist(UUID id, UUID patientProfileId, String situation, String dementiaStage, List songs) {
+     public Playlist(UUID id, UUID patientProfileId, String careNeed, String dementiaStage, List songs) {
         this.id = id;
         this.patientProfileId = patientProfileId;
-        this.situation = situation;
+        this.careNeed = careNeed;
         this.dementiaStage = dementiaStage;
         this.songs = songs;
     }

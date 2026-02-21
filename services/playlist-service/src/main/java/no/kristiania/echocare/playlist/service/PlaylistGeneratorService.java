@@ -2,125 +2,126 @@ package no.kristiania.echocare.playlist.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import no.kristiania.echocare.playlist.api.dto.TrackDto;
+import no.kristiania.echocare.playlist.api.dto.SongDTO;
 import no.kristiania.echocare.playlist.api.dto.request.GeneratePlaylistRequest;
 import no.kristiania.echocare.playlist.api.dto.response.PlaylistResponse;
-import no.kristiania.echocare.playlist.integration.ProfileClient;
+import no.kristiania.echocare.playlist.domain.entity.CareNeed;
+import no.kristiania.echocare.playlist.integration.ProfileServiceClient;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class PlaylistGeneratorService {
 
-    private final ProfileClient profileClient;
+    private final ProfileServiceClient profileServiceClient;
 
     /**
-     * Generate a personalized playlist based on patient profile
-     * Makes synchronous REST call to Profile Service
+     * Generate playlist based on patient profile and care need
+     * User Story 2: Caregiver selects situation and dementia stage to get suitable playlist
      */
     public PlaylistResponse generatePlaylist(GeneratePlaylistRequest request) {
-        log.info("🎵 Generating playlist for patient: {}", request.patientId());
+        Map<String, Object> profileData = profileServiceClient.getProfile(request.patientId());
 
-        // Synchronous call to Profile Service to fetch patient data
-        log.info("📞 Calling Profile Service at /api/profiles/{}", request.patientId());
-        Map<String, Object> profileData = profileClient.getProfile(request.patientId());
-
-        log.info("✅ Received profile data: {}", profileData);
-
-        // Extract profile information
-        String patientName = (String) profileData.get("patientName");
         String era = (String) profileData.get("era");
-        String dementiaStage = (String) profileData.get("dementiaStage");
+        String stage = (String) profileData.get("stage");
 
         @SuppressWarnings("unchecked")
-        List<String> favoriteArtists = (List<String>) profileData.getOrDefault("favoriteArtists", List.of());
+        List<String> artists = (List<String>) profileData.getOrDefault("favoriteArtists", List.of());
 
         @SuppressWarnings("unchecked")
-        List<String> favoriteGenres = (List<String>) profileData.getOrDefault("favoriteGenres", List.of());
+        List<String> genres = (List<String>) profileData.getOrDefault("favoriteGenres", List.of());
 
-        log.info("Patient: {}, Era: {}, Stage: {}", patientName, era, dementiaStage);
-        log.info("Favorite Artists: {}", favoriteArtists);
-        log.info("Favorite Genres: {}", favoriteGenres);
+        // Build tracks based on care need and dementia stage
+        List<SongDTO> tracks = buildTracksForCareNeed(request.careNeed(), stage, era, artists, genres);
 
-        // Generate tracks based on profile
-        List<TrackDto> tracks = buildTracksFromProfile(
-                era, dementiaStage, favoriteArtists, favoriteGenres
-        );
+        log.info("Generated {} tracks for patient {} with care need {} and stage {}",
+                tracks.size(), request.patientId(), request.careNeed(), stage);
 
-        String strategy = "PERSONALIZED_" + dementiaStage;
-
-        log.info("🎉 Generated {} tracks using strategy: {}", tracks.size(), strategy);
-
-        return new PlaylistResponse(strategy, tracks);
+        return new PlaylistResponse(request.patientId(), tracks);
     }
 
     /**
-     * Build track list based on patient profile
+     * Build tracks based on care need with simple rules
+     * For EASE_ANXIETY and moderate stage: start with familiar slow songs
      */
-    private List<TrackDto> buildTracksFromProfile(
-            String era, String dementiaStage,
-            List<String> favoriteArtists, List<String> favoriteGenres) {
+    private List<SongDTO> buildTracksForCareNeed(CareNeed careNeed, String stage,
+                                                   String era, List<String> artists, List<String> genres) {
+        List<SongDTO> tracks = new ArrayList<>();
 
-        List<TrackDto> tracks = new ArrayList<>();
+        // Determine BPM and energy based on care need
+        int baseBpm = getBaseBpmForCareNeed(careNeed);
+        int baseEnergy = getBaseEnergyForCareNeed(careNeed);
 
-        // Add tracks from favorite artists
-        for (int i = 0; i < Math.min(3, favoriteArtists.size()); i++) {
-            String artist = favoriteArtists.get(i);
-            tracks.add(new TrackDto(
-                    "Song " + (i + 1) + " by " + shorten(artist),
-                    artist,
-                    120,  // BPM
-                    era,
-                    5     // energy level
-            ));
+        // For moderate/severe stages, start with slower, more familiar songs
+        boolean isModerateOrSevere = "MODERATE".equals(stage) || "SEVERE".equals(stage);
+
+        if (isModerateOrSevere) {
+            // Start with familiar slow songs from favorite artists
+            artists.stream().limit(2).forEach(artist ->
+                tracks.add(createSong("Familiar Song by " + artist, artist,
+                    genres.isEmpty() ? "Easy Listening" : genres.get(0),
+                    baseBpm - 20, era, baseEnergy - 1)));
         }
 
-        // Add tracks from favorite genres
-        for (int i = 0; i < Math.min(2, favoriteGenres.size()); i++) {
-            String genre = favoriteGenres.get(i);
-            tracks.add(new TrackDto(
-                    shorten(genre) + " Classic",
-                    pickGenreArtist(genre),
-                    110,  // Slightly slower BPM
-                    era,
-                    4     // medium energy
-            ));
-        }
+        // Add songs from favorite artists
+        artists.stream().limit(3).forEach(artist ->
+            tracks.add(createSong("Classic by " + artist, artist,
+                genres.isEmpty() ? "Pop" : genres.get(0),
+                baseBpm, era, baseEnergy)));
 
-        // Add era-specific tracks
-        tracks.add(new TrackDto(
-                "Nostalgic " + era + " Hit",
-                "Classic Artist from " + era,
-                100,
-                era,
-                3
-        ));
+        // Add genre-based songs
+        genres.stream().limit(2).forEach(genre ->
+            tracks.add(createSong(genre + " Classic from " + era,
+                "Popular " + genre + " Artist", genre, baseBpm, era, baseEnergy)));
 
-        // Adjust for dementia stage
-        if ("MODERATE".equals(dementiaStage) || "SEVERE".equals(dementiaStage)) {
-            // Add more familiar, calming tracks
-            tracks.add(new TrackDto(
-                    "Familiar Melody",
-                    "Comfort Artist",
-                    80,   // Slower, calming
-                    era,
-                    2     // Lower energy
-            ));
-        }
+        // Add nostalgic song from the era
+        tracks.add(createSong("Nostalgic " + era + " Hit", "Classic Artist",
+            "Classic", baseBpm - 10, era, baseEnergy - 1));
 
         return tracks;
     }
 
-    private String pickGenreArtist(String genre) {
-        return genre + " Artist";
+    /**
+     * Get base BPM based on care need
+     */
+    private int getBaseBpmForCareNeed(CareNeed careNeed) {
+        return switch (careNeed) {
+            case EASE_ANXIETY, CALMING_AGITATION -> 80;  // Slow, calming
+            case STRESS_RELIEF -> 90;                     // Gentle
+            case EASE_DEPRESSION -> 100;                  // Moderate, uplifting
+            case ACTIVITY_SUPPORT -> 120;                 // Energetic
+        };
     }
 
-    private String shorten(String s) {
-        return s.length() <= 18 ? s : s.substring(0, 18);
+    /**
+     * Get base energy level based on care need
+     */
+    private int getBaseEnergyForCareNeed(CareNeed careNeed) {
+        return switch (careNeed) {
+            case EASE_ANXIETY, CALMING_AGITATION -> 2;   // Low energy
+            case STRESS_RELIEF -> 3;                      // Low-moderate
+            case EASE_DEPRESSION -> 4;                    // Moderate-high
+            case ACTIVITY_SUPPORT -> 5;                   // High energy
+        };
+    }
+
+    private SongDTO createSong(String title, String artist, String genre, int bpm, String era, int energy) {
+        return new SongDTO(UUID.randomUUID(), title, artist, genre, bpm, era, energy);
+    }
+
+    public PlaylistResponse getPlaylistById(UUID playlistId) {
+        // TODO: Implement playlist retrieval by ID
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public SongDTO getSongById(UUID songId) {
+        // TODO: Implement song retrieval by ID
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 }

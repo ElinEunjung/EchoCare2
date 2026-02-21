@@ -1,11 +1,12 @@
 package no.kristiania.echocare.playlist.api.dto.response;
 
-import no.kristiania.echocare.playlist.api.dto.TrackDto;
+import no.kristiania.echocare.playlist.api.dto.SongDTO;
 
 import java.util.List;
+import java.util.UUID;
 
 public record PlaylistResponse(
-        String strategy, // e.g. "ANXEITY_MODERATE_SLOW_START"
-        List<TrackDto> tracks
+        UUID patientId,
+        List<SongDTO> tracks
 ) {
 }

@@ -43,11 +43,10 @@ public class ProfileEventConsumer {
 
     private void handleProfileCreated(ProfileEventDTO event) {
         log.info("Processing CREATED event for profile: {}", event.getProfileId());
-        log.debug("Profile details - Name: {}, Stage: {}, Era: {}-{}",
+        log.debug("Profile details - Name: {}, Stage: {}, Era: {}",
             event.getPatientName(),
             event.getDementiaStage(),
-            event.getEraStart(),
-            event.getEraEnd());
+            event.getEra());
 
         // TODO: Generate initial playlists for the new patient
         // This could include:
@@ -61,9 +60,6 @@ public class ProfileEventConsumer {
 
     private void handleProfileUpdated(ProfileEventDTO event) {
         log.info("Processing UPDATED event for profile: {}", event.getProfileId());
-        log.debug("Updated profile details - Name: {}, Stage: {}",
-            event.getPatientName(),
-            event.getDementiaStage());
 
         // TODO: Update existing playlists based on profile changes
         // This could include:
