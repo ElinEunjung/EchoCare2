@@ -1,7 +1,6 @@
 package no.kristiania.echocare.playlist.api.dto.request;
 
-import no.kristiania.echocare.playlist.domain.entity.CareNeed;
-
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -9,7 +8,9 @@ import java.util.UUID;
  */
 public record GeneratePlaylistRequest(
         UUID patientId,
-        CareNeed careNeed,
-        String dementiaStage
+        String careNeed, // stress_relief, activity_support, calming_agitation, ease_depression, ease_anxiety
+        String era,
+        String dementiaStage,
+        List<String>favoriteArtists
 ) {
 }

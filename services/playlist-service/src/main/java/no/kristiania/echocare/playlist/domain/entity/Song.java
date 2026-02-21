@@ -1,13 +1,18 @@
 package no.kristiania.echocare.playlist.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "songs")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+
 public class Song {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -19,22 +24,10 @@ public class Song {
     @Column(name = "artist", nullable = false)
     private String artist;
 
-    @Column(name = "genre", nullable = false)
-    private String genre;
-
-    @Column(name = "bpm")
-    private Integer bpm; // beats per minute, optional but can be useful for matching energy levels
-
     @Column(name = "release_year", nullable = false)
     private Integer releaseYear;
 
-     public Song(String title, String artist, String genre, Integer releaseYear) {
-        this.title = title;
-        this.artist = artist;
-        this.genre = genre;
-        this.releaseYear = releaseYear;
-    }
-
-     public Song() {
-    }
+    // Audio features for filtering
+    private Double bpm; // beats per minute (60-180), useful for matching energy levels
+    private Double energy; // 1-10 scale for energy level, useful for matching care needs
 }

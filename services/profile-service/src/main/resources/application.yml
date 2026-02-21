@@ -19,7 +19,8 @@ spring:
    defer-datasource-initialization: true
   sql:
     init:
-      mode: never  # Disable initialization scripts since test-data.sql is empty
+      mode: always  # Load seed data on startup
+      data-locations: classpath:test-data.sql
       continue-on-error: false
   rabbitmq:
     host: localhost

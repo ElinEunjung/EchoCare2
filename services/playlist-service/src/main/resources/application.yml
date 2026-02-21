@@ -13,8 +13,15 @@ spring:
       ddl-auto: create-drop
     properties:
       hibernate:
+        format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:test-data.sql
 
   rabbitmq:
     host: localhost
@@ -50,6 +57,10 @@ server:
   servlet:
     context-path: /playlist
 
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    no.kristiania.echocare: DEBUG
 
 jwt:
   secret: WOwTER+0vZAxLEr3LtLzJY1Y77gWWnnuQeUrvvTA9ZKvH47wGBwv1kJ+ghqrn7basSlRTQjjXNsaMJdZNbQRIw==

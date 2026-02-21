@@ -15,6 +15,9 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+
+/** profile-service -> message broker -> playlist-service **/
+
 public class ProfileEventDTO {
 
     private UUID profileId;

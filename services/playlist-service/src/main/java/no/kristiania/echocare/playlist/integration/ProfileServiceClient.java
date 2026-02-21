@@ -18,9 +18,9 @@ public class ProfileServiceClient {
                 .build();
     }
 
-    public Map<String, Object> getProfile(UUID id) {
+    public Map<String, Object> getProfile(UUID profileId) {
         return rest.get()
-                .uri("/api/profiles/{id}", id)
+                .uri("/api/profiles/{profileId}", profileId)
                 .retrieve()
                 .body(Map.class);
     }

@@ -15,6 +15,12 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:test-data.sql
 
   rabbitmq:
     host: rabbitmq
@@ -48,6 +54,11 @@ server:
   port: 8082
   servlet:
     context-path: /playlist
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    no.kristiania.echocare: DEBUG
 
 jwt:
   secret: WOwTER+0vZAxLEr3LtLzJY1Y77gWWnnuQeUrvvTA9ZKvH47wGBwv1kJ+ghqrn7basSlRTQjjXNsaMJdZNbQRIw==

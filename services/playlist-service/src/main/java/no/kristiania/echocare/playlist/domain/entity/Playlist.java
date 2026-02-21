@@ -1,10 +1,12 @@
 package no.kristiania.echocare.playlist.domain.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,6 +14,7 @@ import java.util.UUID;
 @Table(name = "playlists")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Playlist {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -21,8 +24,10 @@ public class Playlist {
     private UUID patientProfileId;
 
     @Column(name = "care_need", nullable = false)
-    private String careNeed; // reduce stress, support activity, calm agitation, ease depression, ease anxiety
+    private String careNeed; // reducestress, support activity, calm agitation, ease depression, ease anxiety
 
+    @Column
+    private String era; // 1960-1970
 
     @Column(name = "dementia_stage")
     private String dementiaStage; // mild, moderate, severe
@@ -33,17 +38,9 @@ public class Playlist {
             joinColumns = @JoinColumn(name = "playlist_id"),
             inverseJoinColumns = @JoinColumn(name = "song_id")
     )
-    private List<Song> songs;
+    private List<Song> songs = new ArrayList<>();
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
-
-     public Playlist(UUID id, UUID patientProfileId, String careNeed, String dementiaStage, List songs) {
-        this.id = id;
-        this.patientProfileId = patientProfileId;
-        this.careNeed = careNeed;
-        this.dementiaStage = dementiaStage;
-        this.songs = songs;
-    }
 }

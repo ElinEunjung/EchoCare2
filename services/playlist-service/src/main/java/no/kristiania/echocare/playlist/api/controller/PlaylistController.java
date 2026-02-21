@@ -9,6 +9,7 @@ import no.kristiania.echocare.playlist.service.PlaylistGeneratorService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -24,20 +25,23 @@ public class PlaylistController {
      * For synchronous call to Profile Service
      */
     @PostMapping("/generate")
-    public ResponseEntity<PlaylistResponse> generatePlaylist(@RequestBody GeneratePlaylistRequest request) {
-        log.info("📨 Generate playlist for patient: {}", request.patientId());
-        PlaylistResponse playlist = service.generatePlaylist(request);
-        return ResponseEntity.ok(playlist);
+    public ResponseEntity<PlaylistResponse> generatePlaylist(
+            @RequestBody GeneratePlaylistRequest request
+    ) {
+        PlaylistResponse response = service.generatePlaylist(request);
+        return ResponseEntity.ok(response);
     }
 
     /**
-     * Get playlist by ID - Used by Feedback Service (synchronous call)
+     * Get playlist by profileID - Used by Feedback Service (synchronous call)
      */
-    @GetMapping("/{playlistId}")
-    public ResponseEntity<PlaylistResponse> getPlaylistById(@PathVariable UUID playlistId){
-        log.info("Fetching playlist for playlistId: {}", playlistId);
-        PlaylistResponse playlist = service.getPlaylistById(playlistId);
-        return ResponseEntity.ok(playlist);
+    @GetMapping("/profile/{profileId}")
+    public ResponseEntity<List> getPlaylistById(
+            @PathVariable UUID profileId
+    ){
+
+        List playlists = service.getPlaylistsByProfile(profileId);
+        return ResponseEntity.ok(playlists);
     }
 
     /**
