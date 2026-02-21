@@ -5,6 +5,7 @@ import no.kristiania.echocare.feedback.api.dto.event.FeedbackEventDTO;
 import no.kristiania.echocare.feedback.api.dto.request.CreateFeedbackRequest;
 import no.kristiania.echocare.feedback.domain.entity.Feedback;
 import no.kristiania.echocare.feedback.domain.repository.FeedbackRepository;
+import no.kristiania.echocare.feedback.integration.FeedbackEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
