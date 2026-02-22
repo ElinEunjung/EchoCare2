@@ -10,7 +10,6 @@ import no.kristiania.echocare.playlist.api.dto.response.ProfileDTO;
 import no.kristiania.echocare.playlist.domain.entity.Playlist;
 import no.kristiania.echocare.playlist.domain.entity.Song;
 import no.kristiania.echocare.playlist.exception.NoSongsAvailableException;
-import no.kristiania.echocare.playlist.integration.ProfileServiceClient;
 import no.kristiania.echocare.playlist.repository.PlaylistRepository;
 import no.kristiania.echocare.playlist.repository.SongRepository;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,7 @@ import java.util.*;
 public class PlaylistGeneratorService {
     private final SongRepository songRepository;
     private final PlaylistRepository playlistRepository;
-    private final ProfileServiceClient profileServiceClient;
+    private final ProfileCacheService profileCacheService;
 
     // Valid input values
     private static final Set<String> VALID_CARE_NEEDS = Set.of(
@@ -61,8 +60,18 @@ public class PlaylistGeneratorService {
      */
     @Transactional
     public PlaylistResponse generatePlaylist(GeneratePlaylistRequest request) {
-        //Fetch profile from Profile Service
-        ProfileDTO profile = profileServiceClient.getProfile(request.patientId());
+        //Fetch profile from cache (populated by RabbitMQ events)
+        // Falls back to REST call if not in cache
+        ProfileDTO profile = profileCacheService.getProfile(request.patientId());
+
+        // Use cached profile data when available (async flow), fall back to request data (sync flow)
+        String era = (profile != null && profile.era() != null) ? profile.era() : request.era();
+        List<String> favoriteArtists = (profile != null && profile.favoriteArtists() != null && !profile.favoriteArtists().isEmpty())
+            ? profile.favoriteArtists()
+            : request.favoriteArtists();
+
+        log.info("Generating playlist - Using cached profile: {}, Era: {}, Favorite Artists: {}",
+            profile != null, era, favoriteArtists);
 
         // Validate inputs
         String careNeed = validateCareNeed(request.careNeed());
@@ -76,7 +85,7 @@ public class PlaylistGeneratorService {
 
         // Filter by care need, stage, era, and favorite artists
         List<Song> selectedSongs = selectSongs(
-                allSongs, careNeed, stage, request.era(), request.favoriteArtists());
+                allSongs, careNeed, stage, era, favoriteArtists);
 
         // Add randomization to avoid same playlist every time
         // Convert to mutable list before shuffling (stream().toList() returns immutable list)
@@ -88,7 +97,7 @@ public class PlaylistGeneratorService {
         playlist.setPatientProfileId(request.patientId());
         playlist.setCareNeed(careNeed);
         playlist.setDementiaStage(stage);
-        playlist.setEra(request.era()); // Save era for future reference
+        playlist.setEra(era); // Save era from cached profile (or fallback to request)
         playlist.setSongs(mutableSongs);
 
         playlistRepository.save(playlist);

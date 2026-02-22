@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import no.kristiania.echocare.playlist.api.dto.response.ProfileDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import java.util.UUID;
 
@@ -27,9 +29,17 @@ public class ProfileServiceClient {
             ProfileDTO profile = restTemplate.getForObject(url, ProfileDTO.class);
             log.info("Received profile data: {}", profile);
             return profile;
+        } catch (HttpClientErrorException e) {
+            log.error("Profile Service returned error status={} for profileId={}: {}",
+                    e.getStatusCode().value(), profileId, e.getResponseBodyAsString());
+            throw new RuntimeException("Failed to fetch profile data - Status: " + e.getStatusCode().value(), e);
+        } catch (HttpServerErrorException e) {
+            log.error("Profile Service server error status={} for profileId={}: {}",
+                    e.getStatusCode().value(), profileId, e.getResponseBodyAsString());
+            throw new RuntimeException("Profile Service server error - Status: " + e.getStatusCode().value(), e);
         } catch (Exception e) {
-            log.error("Failed to fetch profile: {}", e.getMessage());
-            throw new RuntimeException("Failed to fetch profile data", e);
+            log.error("Failed to fetch profile from {}: {}", url, e.getMessage(), e);
+            throw new RuntimeException("Failed to fetch profile data: " + e.getMessage(), e);
         }
     }
 }
