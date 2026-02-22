@@ -29,13 +29,12 @@ spring:
           max-attempts: 3
           multiplier: 2.0
 
-# Custom properties for exchanges and queues
+# Custom properties for exchanges and routing keys
+# Note: Profile Service is a PUBLISHER only - it does not create queues
+# Consumers (like playlist-service) create their own queues and bind to this exchange
 rabbitmq:
   exchange:
     profile: profile.exchange
-  queue:
-    profile-created: profile.created.queue
-    profile-updated: profile.updated.queue
   routing-key:
     profile-created: profile.created
     profile-updated: profile.updated

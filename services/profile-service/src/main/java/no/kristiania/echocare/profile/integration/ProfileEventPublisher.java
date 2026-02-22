@@ -1,4 +1,4 @@
-package no.kristiania.echocare.profile.service;
+package no.kristiania.echocare.profile.integration;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -73,7 +73,7 @@ public class ProfileEventPublisher {
         event.setPatientName(profile.getPatientName());
         event.setEra(profile.getEra());
         event.setDementiaStage(profile.getDementiaStage());
-
+        event.setFavoriteArtists(profile.getFavoriteArtists());
 
         // Map symptoms (already a List<String>)
         event.setSymptoms(profile.getSymptoms());

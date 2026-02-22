@@ -3,11 +3,14 @@ package no.kristiania.echocare.profile.service;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import no.kristiania.echocare.profile.api.dto.requests.CreatePatientProfileRequest;
+import no.kristiania.echocare.profile.api.dto.response.PatientProfileResponse;
 import no.kristiania.echocare.profile.domain.entity.PatientProfile;
+import no.kristiania.echocare.profile.integration.ProfileEventPublisher;
 import no.kristiania.echocare.profile.repository.PatientProfileRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -20,24 +23,35 @@ public class PatientProfileService {
      * User story 1: Create patient profile and publish event to RabbitMQ
      */
     @Transactional
-    public PatientProfile createProfile(CreatePatientProfileRequest request) {
+    public PatientProfileResponse createProfile(CreatePatientProfileRequest request) {
         PatientProfile profile = new PatientProfile(request);
         PatientProfile savedProfile = patientProfileRepository.save(profile);
 
         // Publish event to RabbitMQ for playlist-service
         eventPublisher.publishProfileCreated(savedProfile);
 
-        return savedProfile;
+        return mapToResponse(savedProfile);
     }
 
-    public PatientProfile getProfileById(UUID id) {
-        return patientProfileRepository.findById(id)
+    public PatientProfileResponse getProfileById(UUID id) {
+        PatientProfile profile = patientProfileRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Profile not found with id: " + id));
+        return mapToResponse(profile);
+    }
+
+    /**
+     * Get all patient profiles
+     */
+    public List<PatientProfileResponse> getAllProfiles() {
+        return patientProfileRepository.findAll().stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
     @Transactional
-    public PatientProfile updateProfile(UUID id, @Valid CreatePatientProfileRequest request) {
-        PatientProfile profile = getProfileById(id);
+    public PatientProfileResponse updateProfile(UUID id, @Valid CreatePatientProfileRequest request) {
+        PatientProfile profile = patientProfileRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Profile not found with id: " + id));
 
         // Update with new data from request
         profile.setPatientName(request.patientName());
@@ -51,6 +65,25 @@ public class PatientProfileService {
         // Publish update event
         eventPublisher.publishProfileUpdated(savedProfile);
 
-        return savedProfile;
+        return mapToResponse(savedProfile);
+    }
+
+    private PatientProfileResponse mapToResponse(PatientProfile profile) {
+        List<String> favoriteArtists = profile.getFavoriteArtists() != null
+                ? profile.getFavoriteArtists()
+                : List.of();
+
+        String symptoms = profile.getSymptoms() != null
+                ? String.join(", ", profile.getSymptoms())
+                : "";
+
+        return new PatientProfileResponse(
+                profile.getId(),
+                profile.getPatientName(),
+                profile.getEra(),
+                favoriteArtists,
+                symptoms,
+                profile.getDementiaStage()
+        );
     }
 }
