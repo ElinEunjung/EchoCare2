@@ -8,10 +8,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Event DTO for receiving Profile-related events from RabbitMQ
- * Consumed from profile.created and profile.updated events
- */
+// Used for:
+// RabbitMQ messages (Profile Service → Playlist Service)
+// Consumed from profile.created and profile.updated events
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

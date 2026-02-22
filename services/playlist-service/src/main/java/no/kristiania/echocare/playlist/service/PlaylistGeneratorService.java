@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.kristiania.echocare.playlist.api.dto.SongDTO;
 import no.kristiania.echocare.playlist.api.dto.request.GeneratePlaylistRequest;
 import no.kristiania.echocare.playlist.api.dto.response.PlaylistResponse;
+import no.kristiania.echocare.playlist.api.dto.response.ProfileDTO;
 import no.kristiania.echocare.playlist.domain.entity.Playlist;
 import no.kristiania.echocare.playlist.domain.entity.Song;
 import no.kristiania.echocare.playlist.exception.NoSongsAvailableException;
@@ -22,8 +23,6 @@ import java.util.*;
 public class PlaylistGeneratorService {
     private final SongRepository songRepository;
     private final PlaylistRepository playlistRepository;
-
-    // TODO: Use ProfileServiceClient to fetch patient profile data for enhanced playlist generation
     private final ProfileServiceClient profileServiceClient;
 
     // Valid input values
@@ -62,6 +61,9 @@ public class PlaylistGeneratorService {
      */
     @Transactional
     public PlaylistResponse generatePlaylist(GeneratePlaylistRequest request) {
+        //Fetch profile from Profile Service
+        ProfileDTO profile = profileServiceClient.getProfile(request.patientId());
+
         // Validate inputs
         String careNeed = validateCareNeed(request.careNeed());
         String stage = validateDementiaStage(request.dementiaStage());

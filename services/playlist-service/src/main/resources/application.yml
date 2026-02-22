@@ -54,8 +54,12 @@ rabbitmq:
 
 server:
   port: 8082
-  servlet:
-    context-path: /playlist
+
+
+# Profile Service URL (used for fetching user profiles)
+services:
+  profile:
+    url: http://localhost:8081
 
 logging:
   level:

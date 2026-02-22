@@ -52,8 +52,6 @@ rabbitmq:
 
 server:
   port: 8082
-  servlet:
-    context-path: /playlist
 
 logging:
   level:
