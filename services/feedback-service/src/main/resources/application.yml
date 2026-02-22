@@ -34,8 +34,6 @@ spring:
 rabbitmq:
   exchange:
     feedback: feedback.exchange
-  queue:
-    feedback-submitted: feedback.submitted.queue
   routing-key:
     feedback-submitted: feedback.submitted
 

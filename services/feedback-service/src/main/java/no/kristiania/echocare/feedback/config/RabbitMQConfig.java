@@ -11,6 +11,10 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * RabbitMQ Configuration for Feedback Service
+ *
+ * Feedback Service is a PUBLISHER only — it does NOT create queues.
+ * Consumers (like playlist-service) create their own queues and bind to this exchange.
+ *
  * Publishes feedback.submitted events to feedback.exchange
  */
 @Configuration
@@ -19,29 +23,18 @@ public class RabbitMQConfig {
     @Value("${rabbitmq.exchange.feedback}")
     private String feedbackExchange;
 
-    @Value("${rabbitmq.queue.feedback-submitted}")
-    private String feedbackSubmittedQueue;
-
     @Value("${rabbitmq.routing-key.feedback-submitted}")
     private String feedbackSubmittedRoutingKey;
 
+    /**
+     * Feedback Exchange - used for publishing feedback events
+     * Consumers (like playlist-service) will create their own queues and bind to this exchange
+     */
     @Bean
     public TopicExchange feedbackExchange() {
         return new TopicExchange(feedbackExchange);
     }
 
-    @Bean
-    public Queue feedbackSubmittedQueue() {
-        return new Queue(feedbackSubmittedQueue, true);
-    }
-
-    @Bean
-    public Binding feedbackSubmittedBinding() {
-        return BindingBuilder
-                .bind(feedbackSubmittedQueue())
-                .to(feedbackExchange())
-                .with(feedbackSubmittedRoutingKey);
-    }
 
     @Bean
     public MessageConverter jsonMessageConverter() {
