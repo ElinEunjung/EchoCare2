@@ -24,9 +24,6 @@ public class Feedback {
     @Column(name = "playlist_id", nullable = false)
     private UUID playlistId;
 
-    @Column(name = "song_id", nullable = false)
-    private UUID songId;
-
     private String dementiaStage; // mild/moderate/severe/null
 
     private String careNeed;
@@ -46,8 +43,9 @@ public class Feedback {
     // Constructor to convert from CreateFeedbackRequest
     public Feedback(SubmitFeedbackRequest request) {
         this.playlistId = request.playlistId();
-        this.songId = request.songId();
         this.patientProfileId = request.patientProfileId();
         this.liked = request.liked();
+        this.dementiaStage = request.dementiaStage();
+        this.careNeed = request.careNeed();
     }
 }

@@ -38,7 +38,6 @@ public class FeedbackService {
         Feedback feedback = new Feedback();
         feedback.setPatientProfileId(request.patientProfileId());
         feedback.setPlaylistId(request.playlistId());
-        feedback.setSongId(request.songId());
         feedback.setLiked(request.liked());
         feedback.setDementiaStage(request.dementiaStage());
         feedback.setCareNeed(request.careNeed());

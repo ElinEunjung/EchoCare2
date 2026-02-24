@@ -18,7 +18,6 @@ public class FeedbackEventDTO {
 
     private UUID feedbackId;
     private UUID playlistId;
-    private UUID songId;
     private UUID patientProfileId;
     private Boolean liked;
     private String careNeed;
@@ -29,7 +28,6 @@ public class FeedbackEventDTO {
     public FeedbackEventDTO(Feedback feedback) {
         this.feedbackId = feedback.getId();
         this.playlistId = feedback.getPlaylistId();
-        this.songId = feedback.getSongId();
         this.patientProfileId = feedback.getPatientProfileId();
         this.liked = feedback.getLiked();
         this.careNeed = feedback.getCareNeed();

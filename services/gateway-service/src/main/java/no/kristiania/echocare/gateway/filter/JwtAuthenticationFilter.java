@@ -50,8 +50,10 @@ public class JwtAuthenticationFilter
                 String path = request.getURI().getPath();
 
                 // Auth endpoints are public — skip JWT check
-                if (path.startsWith("/api/auth")) {
-                    log.debug("Skipping JWT validation for auth endpoint: {}", path);
+                if (path.startsWith("/api/auth") ||
+                        path.startsWith("/api/caregivers") ||
+                        path.startsWith("/actuator")) {
+                    log.debug("Skipping JWT validation for public endpoint: {}", path);
                     return chain.filter(exchange);
                 }
 

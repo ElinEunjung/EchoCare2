@@ -38,9 +38,9 @@ public class FeedbackEventConsumer {
 
         if (event.getLiked() != null) {
             if (event.getLiked()) {
-                log.info("Song {} was liked - Should boost in future playlist", event.getSongId());
+                log.info("playlist {} was liked - Should suggest in future", event.getPlaylistId());
             } else {
-                log.info("Song {} was disliked - Should avoid in future playlist", event.getSongId());
+                log.info("playlist {} was disliked - Should avoid in future", event.getPlaylistId());
             }
         }
     }

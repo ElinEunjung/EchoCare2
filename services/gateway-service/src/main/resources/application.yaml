@@ -5,7 +5,7 @@ spring:
   cloud:
     gateway:
       routes:
-        # Auth endpoints (public - no JWT needed)
+        # Auth endpoints (public - no JWT needed for registration and login)
         - id: auth-route
           uri: http://localhost:8081
           predicates:
@@ -51,3 +51,12 @@ logging:
   level:
     org.springframework.cloud.gateway: DEBUG
     no.kristiania.echocare: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always

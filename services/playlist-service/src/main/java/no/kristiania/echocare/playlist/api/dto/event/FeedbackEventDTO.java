@@ -19,7 +19,6 @@ public class FeedbackEventDTO {
 
     private UUID feedbackId;
     private UUID playlistId;
-    private UUID songId;
     private UUID patientProfileId;
     private Boolean liked;
     private String careNeed;

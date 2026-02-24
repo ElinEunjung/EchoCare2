@@ -7,7 +7,6 @@ import java.util.UUID;
 
 public record SubmitFeedbackRequest(
         UUID playlistId,
-        UUID songId,
         UUID patientProfileId,
         Boolean liked,
         String dementiaStage,

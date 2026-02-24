@@ -8,7 +8,6 @@ import java.util.UUID;
 public record FeedbackResponse(
         UUID feedbackId,
         UUID playlistId,
-        UUID songId,
         UUID patientProfileId,
         Boolean liked,
         LocalDateTime createdAt
@@ -18,7 +17,6 @@ public record FeedbackResponse(
         this(
             feedback.getId(),
             feedback.getPlaylistId(),
-            feedback.getSongId(),
             feedback.getPatientProfileId(),
             feedback.getLiked(),
             feedback.getCreatedAt()

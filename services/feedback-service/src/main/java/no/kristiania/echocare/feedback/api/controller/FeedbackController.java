@@ -37,5 +37,9 @@ public class FeedbackController {
         List<FeedbackResponse> feedbackResponses = feedbackService.getFeedbackForProfile(profileId);
         return ResponseEntity.ok(feedbackResponses);
     }
-}
 
+    @GetMapping("/health")
+    public ResponseEntity<String> healthCheck() {
+        return ResponseEntity.ok("Feedback Service is healthy");
+    }
+}
