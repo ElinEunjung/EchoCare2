@@ -2,12 +2,16 @@ package no.kristiania.echocare.feedback.service;
 
 import lombok.RequiredArgsConstructor;
 import no.kristiania.echocare.feedback.api.dto.event.FeedbackEventDTO;
-import no.kristiania.echocare.feedback.api.dto.request.CreateFeedbackRequest;
+import no.kristiania.echocare.feedback.api.dto.request.SubmitFeedbackRequest;
+import no.kristiania.echocare.feedback.api.dto.response.FeedbackResponse;
 import no.kristiania.echocare.feedback.domain.entity.Feedback;
-import no.kristiania.echocare.feedback.domain.repository.FeedbackRepository;
+import no.kristiania.echocare.feedback.repository.FeedbackRepository;
 import no.kristiania.echocare.feedback.integration.FeedbackEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Service for feedback operations
@@ -22,14 +26,23 @@ public class FeedbackService {
 
     /**
      * Submit feedback: save to database and publish event
-     *
-     * @param request the feedback request from the caregiver
-     * @return the feedback event DTO for the response
      */
     @Transactional
-    public FeedbackEventDTO submitFeedback(CreateFeedbackRequest request) {
+    public FeedbackEventDTO submitFeedback(SubmitFeedbackRequest request) {
+        // Validate request
+        if (request.liked() == null) {
+            throw new IllegalArgumentException("Liked field cannot be null");
+        }
+
         // Save feedback to database
-        Feedback feedback = new Feedback(request);
+        Feedback feedback = new Feedback();
+        feedback.setPatientProfileId(request.patientProfileId());
+        feedback.setPlaylistId(request.playlistId());
+        feedback.setSongId(request.songId());
+        feedback.setLiked(request.liked());
+        feedback.setDementiaStage(request.dementiaStage());
+        feedback.setCareNeed(request.careNeed());
+
         Feedback savedFeedback = feedbackRepository.save(feedback);
 
         // Publish event to RabbitMQ
@@ -37,6 +50,13 @@ public class FeedbackService {
 
         // Return event DTO
         return new FeedbackEventDTO(savedFeedback);
+    }
+
+    public List<FeedbackResponse> getFeedbackForProfile(UUID profileId) {
+        List<Feedback> feedbackList = feedbackRepository.findByPatientProfileId(profileId);
+        return feedbackList.stream()
+                .map(FeedbackResponse::new)
+                .toList();
     }
 }
 

@@ -21,10 +21,10 @@ public class FeedbackEventDTO {
     private UUID songId;
     private UUID patientProfileId;
     private Boolean liked;
-    private Integer rating;
-    private String situation;
+    private String careNeed;
+    private String dementiaStage;
     private String eventType;
-    private LocalDateTime timestamp;
+    private LocalDateTime createdAt;
 
     public FeedbackEventDTO(Feedback feedback) {
         this.feedbackId = feedback.getId();
@@ -32,10 +32,10 @@ public class FeedbackEventDTO {
         this.songId = feedback.getSongId();
         this.patientProfileId = feedback.getPatientProfileId();
         this.liked = feedback.getLiked();
-        this.rating = feedback.getRating();
-        this.situation = feedback.getSituation();
+        this.careNeed = feedback.getCareNeed();
+        this.dementiaStage = feedback.getDementiaStage();
         this.eventType = "SUBMITTED";
-        this.timestamp = feedback.getCreatedAt();
+        this.createdAt = feedback.getCreatedAt();
     }
 }
 

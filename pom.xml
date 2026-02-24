@@ -17,6 +17,7 @@
 
 
     <modules>
+        <module>services/gateway-service</module>
         <module>services/profile-service</module>
         <module>services/playlist-service</module>
         <module>services/feedback-service</module>

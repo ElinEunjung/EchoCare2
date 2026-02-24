@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: gateway-service
+
+  cloud:
+    gateway:
+      routes:
+        # Auth endpoints (public - no JWT needed)
+        - id: auth-route
+          uri: http://profile-service:8081
+          predicates:
+            - Path=/api/auth/**
+
+        # Caregiver endpoints (public - no JWT needed)
+        - id: caregiver-route
+          uri: http://profile-service:8081
+          predicates:
+            - Path=/api/caregivers/**
+
+        # Profile Service (requires JWT)
+        - id: profile-route
+          uri: http://profile-service:8081
+          predicates:
+            - Path=/api/profiles/**
+          filters:
+            - JwtAuthenticationFilter
+
+        # Playlist Service (requires JWT)
+        - id: playlist-route
+          uri: http://playlist-service:8082
+          predicates:
+            - Path=/api/playlists/**
+          filters:
+            - JwtAuthenticationFilter
+
+        # Feedback Service (requires JWT)
+        - id: feedback-route
+          uri: http://feedback-service:8083
+          predicates:
+            - Path=/api/feedback/**
+          filters:
+            - JwtAuthenticationFilter
+
+jwt:
+  secret: ${JWT_SECRET}
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    no.kristiania.echocare: DEBUG

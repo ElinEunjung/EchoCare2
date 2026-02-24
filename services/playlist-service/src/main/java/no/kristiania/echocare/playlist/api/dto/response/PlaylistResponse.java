@@ -11,7 +11,7 @@ public record PlaylistResponse(
         String careNeed,
         String era,
         String dementiaStage,
-        List<SongDTO> tracks,
+        List<SongDTO> songs,
         String message // e.g., "10 calming songs selected for stress relief in mild stage"
 ) {
 }

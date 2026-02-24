@@ -22,11 +22,9 @@ public class FeedbackEventDTO {
     private UUID songId;
     private UUID patientProfileId;
     private Boolean liked;
-    private Integer rating;
-    private String situation;
+    private String careNeed;
+    private String dementiaStage;
     private String eventType; // "SUBMITTED", "UPDATED", etc.
-
-    private LocalDateTime timestamp;
-
+    private LocalDateTime createdAt;
 }
 

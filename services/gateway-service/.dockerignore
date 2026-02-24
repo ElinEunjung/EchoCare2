@@ -1,0 +1,14 @@
+target/
+.git/
+.gitignore
+.gitattributes
+*.md
+README.md
+.mvn/wrapper/*.jar
+.idea/
+*.iml
+.settings/
+.project
+.classpath
+filter/
+

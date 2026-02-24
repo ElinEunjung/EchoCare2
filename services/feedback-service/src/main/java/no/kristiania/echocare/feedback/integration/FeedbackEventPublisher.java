@@ -6,14 +6,16 @@ import no.kristiania.echocare.feedback.api.dto.event.FeedbackEventDTO;
 import no.kristiania.echocare.feedback.domain.entity.Feedback;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 /**
  * Publisher service for Feedback events to RabbitMQ
  */
-@Slf4j
-@Service
+
+@Component
 @RequiredArgsConstructor
+@Slf4j
 public class FeedbackEventPublisher {
 
     private final RabbitTemplate rabbitTemplate;

@@ -27,20 +27,23 @@ public class FeedbackEventConsumer {
             event.getPatientProfileId());
 
         try {
-            switch (event.getEventType()) {
-                case "SUBMITTED":
-                    handleFeedbackSubmitted(event);
-                    break;
-                default:
-                    log.warn("Unknown event type: {}", event.getEventType());
+            if (event.getEventType().equals("SUBMITTED")) {
+                handleFeedbackSubmitted(event);
+            } else {
+                log.warn("Unknown event type: {}", event.getEventType());
             }
         } catch (Exception e) {
             log.error("Failed to process feedback event: {}", event, e);
         }
+
+        if (event.getLiked() != null) {
+            if (event.getLiked()) {
+                log.info("Song {} was liked - Should boost in future playlist", event.getSongId());
+            } else {
+                log.info("Song {} was disliked - Should avoid in future playlist", event.getSongId());
+            }
+        }
     }
-
-
-     //TODO: Implement feedback processing and playlist recommendation adjustment
 
     private void handleFeedbackSubmitted(FeedbackEventDTO event) {
         log.info("Processing SUBMITTED feedback: feedbackId={}, patientProfileId={}",
@@ -51,11 +54,7 @@ public class FeedbackEventConsumer {
         // Example: FeedbackDTO fullFeedback = feedbackServiceClient.getFeedbackById(event.getFeedbackId());
 
         // TODO: Process feedback and adjust future recommendations
-        // This could include:
-        // - Updating song preference scores based on likes/dislikes
-        // - Adjusting genre weights for the patient
-        // - Learning situation-specific preferences
-        // - Marking songs as favorites or to be avoided based on ratings
+        // Updating song preference scores based on likes/dislikes
     }
 }
 

@@ -59,6 +59,7 @@ public class PlaylistController {
      */
     @GetMapping("/health")
     public ResponseEntity health() {
+
         return ResponseEntity.ok("Playlist Service is running");
     }
 

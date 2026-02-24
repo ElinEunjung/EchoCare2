@@ -8,7 +8,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
    hibernate:
-     ddl-auto: create-drop  # Change to 'update' for production
+     ddl-auto: update
    show-sql: true
 
    properties:
@@ -17,11 +17,6 @@ spring:
        format_sql: true
 
    defer-datasource-initialization: true
-  sql:
-    init:
-      mode: always  # Load seed data on startup
-      data-locations: classpath:test-data.sql
-      continue-on-error: false
   rabbitmq:
     host: localhost
     port: 5672

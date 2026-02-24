@@ -23,7 +23,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/api/auth/**", "/api/profiles/**", "/actuator/**", "/error").permitAll() // Public endpoints
+                        .requestMatchers("/", "/api/auth/**", "/api/profiles/**", "/api/caregivers/**", "/actuator/**", "/error").permitAll() // Public endpoints
                         .anyRequest().authenticated() // All other endpoints require auth
                 )
                 .sessionManagement(session -> session

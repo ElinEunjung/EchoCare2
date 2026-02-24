@@ -32,12 +32,14 @@ public class RabbitMQConfig {
      */
     @Bean
     public TopicExchange feedbackExchange() {
+
         return new TopicExchange(feedbackExchange);
     }
 
 
     @Bean
     public MessageConverter jsonMessageConverter() {
+
         return new Jackson2JsonMessageConverter();
     }
 

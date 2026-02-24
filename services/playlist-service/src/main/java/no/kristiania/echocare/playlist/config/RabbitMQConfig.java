@@ -73,12 +73,14 @@ public class RabbitMQConfig {
 
     @Bean
     public TopicExchange feedbackExchange() {
+
         return new TopicExchange(feedbackExchange);
     }
 
 
     @Bean
     public Queue feedbackEventsQueue() {
+
         return new Queue(feedbackEventsQueue, true); // durable = true
     }
 

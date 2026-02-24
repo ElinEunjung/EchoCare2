@@ -3,19 +3,23 @@ package no.kristiania.echocare.feedback.domain.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import no.kristiania.echocare.feedback.api.dto.request.CreateFeedbackRequest;
+import no.kristiania.echocare.feedback.api.dto.request.SubmitFeedbackRequest;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "feedback_entries")
+@Table(name = "feedback")
 @Data
 @NoArgsConstructor
 public class Feedback {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    @Column(name = "patient_profile_id", nullable = false)
+    private UUID patientProfileId;
 
     @Column(name = "playlist_id", nullable = false)
     private UUID playlistId;
@@ -23,25 +27,27 @@ public class Feedback {
     @Column(name = "song_id", nullable = false)
     private UUID songId;
 
-    @Column(name = "patient_profile_id", nullable = false)
-    private UUID patientProfileId;
+    private String dementiaStage; // mild/moderate/severe/null
 
-    private Boolean liked; // true for like, false for dislike
+    private String careNeed;
 
-    private Integer rating; // 1-5 stars
+    private Boolean liked; // true/false/null
 
-    private String situation; // reduce stress, support activity, calm agitation, ease depression, ease anxiety
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+
 
     // Constructor to convert from CreateFeedbackRequest
-    public Feedback(CreateFeedbackRequest request) {
-        this.playlistId = request.getPlaylistId();
-        this.songId = request.getSongId();
-        this.patientProfileId = request.getPatientProfileId();
-        this.liked = request.getLiked();
-        this.rating = request.getRating();
-        this.situation = request.getSituation();
+    public Feedback(SubmitFeedbackRequest request) {
+        this.playlistId = request.playlistId();
+        this.songId = request.songId();
+        this.patientProfileId = request.patientProfileId();
+        this.liked = request.liked();
     }
 }

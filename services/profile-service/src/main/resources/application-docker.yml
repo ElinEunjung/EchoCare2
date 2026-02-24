@@ -2,13 +2,13 @@ spring:
   application:
     name: profile-service
   datasource:
-    url: jdbc:postgresql://localhost:5435/profile_db
+    url: jdbc:postgresql://echocare-profile-db:5432/profile_db
     username: profile_user
     password: profile_pass
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop  # Change to 'update' for production
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
