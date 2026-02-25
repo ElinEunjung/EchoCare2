@@ -8,7 +8,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
    hibernate:
-     ddl-auto: update
+     ddl-auto: validate  # Changed from 'update' to 'validate' - Flyway manages schema
    show-sql: true
 
    properties:
@@ -16,7 +16,11 @@ spring:
        dialect: org.hibernate.dialect.PostgreSQLDialect
        format_sql: true
 
-   defer-datasource-initialization: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true  # For existing databases
+    locations: classpath:db/migration
+    validate-on-migrate: true
   rabbitmq:
     host: localhost
     port: 5672

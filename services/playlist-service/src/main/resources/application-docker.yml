@@ -10,17 +10,21 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate  # Changed from 'update' to 'validate' - Flyway manages schema
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
-    defer-datasource-initialization: true
 
   sql:
     init:
-      mode: never
-      data-locations: classpath:test-data.sql
+      mode: never  # Disabled - Flyway manages all database initialization
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true  # For existing databases
+    locations: classpath:db/migration
+    validate-on-migrate: true
 
   rabbitmq:
     host: echocare-rabbitmq
