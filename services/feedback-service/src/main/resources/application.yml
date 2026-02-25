@@ -53,11 +53,15 @@ management:
       base-path: /actuator
   endpoint:
     health:
-      show-details: always
-      show-components: always
+      show-details: when-authorized  # Shows details only for authorized users (MVP-friendly)
+      show-components: when-authorized
   health:
     defaults:
       enabled: true
+    db:
+      enabled: true  # Database health check
+    rabbit:
+      enabled: true  # RabbitMQ health check
 
 info:
   app:

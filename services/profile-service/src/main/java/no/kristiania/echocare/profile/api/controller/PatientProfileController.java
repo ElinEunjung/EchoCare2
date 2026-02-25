@@ -56,9 +56,4 @@ public class PatientProfileController {
         PatientProfileResponse response = profileService.updateProfile(id, request);
         return ResponseEntity.ok(response);
     }
-
-    @GetMapping("/health")
-    public ResponseEntity<String> health() {
-        return ResponseEntity.ok("Profile Service is running");
-    }
 }

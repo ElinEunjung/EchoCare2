@@ -41,6 +41,28 @@ spring:
           filters:
             - JwtAuthenticationFilter
 
+        # Health check routes (no JWT needed)
+        - id: profile-actuator
+          uri: http://profile-service:8081
+          predicates:
+            - Path=/services/profile/actuator/**
+          filters:
+            - RewritePath=/services/profile/actuator/(?<segment>.*), /actuator/$\{segment}
+
+        - id: playlist-actuator
+          uri: http://playlist-service:8082
+          predicates:
+            - Path=/services/playlist/actuator/**
+          filters:
+            - RewritePath=/services/playlist/actuator/(?<segment>.*), /actuator/$\{segment}
+
+        - id: feedback-actuator
+          uri: http://feedback-service:8083
+          predicates:
+            - Path=/services/feedback/actuator/**
+          filters:
+            - RewritePath=/services/feedback/actuator/(?<segment>.*), /actuator/$\{segment}
+
 jwt:
   secret: ${JWT_SECRET}
 

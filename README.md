@@ -48,7 +48,7 @@ echocare/
 - Clone instructions
 - Build & run:
 ```
-docker compose up
+docker compose up --build
 ```
 - Access info:
     - localhost ports:

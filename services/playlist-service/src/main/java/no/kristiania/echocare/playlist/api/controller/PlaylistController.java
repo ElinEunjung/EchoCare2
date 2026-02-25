@@ -58,14 +58,6 @@ public class PlaylistController {
         return ResponseEntity.ok(song);
     }
 
-    /**
-     * Health check
-     */
-    @GetMapping("/health")
-    public ResponseEntity health() {
-
-        return ResponseEntity.ok("Playlist Service is running");
-    }
 
     /**
      * Clear profile cache - forces synchronous REST calls to Profile Service

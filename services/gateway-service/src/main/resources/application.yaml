@@ -41,6 +41,28 @@ spring:
           filters:
             - JwtAuthenticationFilter
 
+        # Health check routes (public access for monitoring)
+        - id: profile-actuator
+          uri: http://localhost:8081
+          predicates:
+            - Path=/services/profile/actuator/**
+          filters:
+            - RewritePath=/services/profile/actuator/(?<segment>.*), /actuator/$\{segment}
+
+        - id: playlist-actuator
+          uri: http://localhost:8082
+          predicates:
+            - Path=/services/playlist/actuator/**
+          filters:
+            - RewritePath=/services/playlist/actuator/(?<segment>.*), /actuator/$\{segment}
+
+        - id: feedback-actuator
+          uri: http://localhost:8083
+          predicates:
+            - Path=/services/feedback/actuator/**
+          filters:
+            - RewritePath=/services/feedback/actuator/(?<segment>.*), /actuator/$\{segment}
+
 jwt:
   secret: WOwTER+0vZAxLEr3LtLzJY1Y77gWWnnuQeUrvvTA9ZKvH47wGBwv1kJ+ghqrn7basSlRTQjjXNsaMJdZNbQRIw==
 
@@ -56,7 +78,18 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,gateway
+      base-path: /actuator
   endpoint:
     health:
-      show-details: always
+      show-details: when-authorized
+      show-components: when-authorized
+  health:
+    defaults:
+      enabled: true
+
+info:
+  app:
+    name: Gateway Service
+    description: API Gateway for EchoCare microservices
+    version: 1.0.0
