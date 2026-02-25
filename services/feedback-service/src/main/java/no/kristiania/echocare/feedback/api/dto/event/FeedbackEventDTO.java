@@ -10,6 +10,10 @@ import java.util.UUID;
 
 /**
  * Event DTO for Feedback-related events published to RabbitMQ
+ *
+ * Feedback is immutable once submitted - represents the patient's authentic
+ * response at that moment in time. This preserves historical accuracy for
+ * analytics and pattern detection.
  */
 @Data
 @AllArgsConstructor
@@ -20,8 +24,6 @@ public class FeedbackEventDTO {
     private UUID playlistId;
     private UUID patientProfileId;
     private Boolean liked;
-    private String careNeed;
-    private String dementiaStage;
     private String eventType;
     private LocalDateTime createdAt;
 
@@ -30,11 +32,7 @@ public class FeedbackEventDTO {
         this.playlistId = feedback.getPlaylistId();
         this.patientProfileId = feedback.getPatientProfileId();
         this.liked = feedback.getLiked();
-        this.careNeed = feedback.getCareNeed();
-        this.dementiaStage = feedback.getDementiaStage();
         this.eventType = "SUBMITTED";
         this.createdAt = feedback.getCreatedAt();
     }
 }
-
-

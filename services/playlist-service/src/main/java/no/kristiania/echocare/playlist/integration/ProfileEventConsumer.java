@@ -5,13 +5,18 @@ import lombok.extern.slf4j.Slf4j;
 import no.kristiania.echocare.playlist.api.dto.event.ProfileEventDTO;
 import no.kristiania.echocare.playlist.service.ProfileCacheService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
  * Consumer for Profile-related events from RabbitMQ.
  * Caches profile data for playlist generation.
+ *
+ * This consumer is only active when RabbitMQ is enabled.
+ * When disabled, the service falls back to synchronous REST calls.
  */
 @Component
+@ConditionalOnProperty(name = "spring.rabbitmq.enabled", havingValue = "true", matchIfMissing = true)
 @RequiredArgsConstructor
 @Slf4j
 public class ProfileEventConsumer {

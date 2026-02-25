@@ -24,7 +24,7 @@ public class Playlist {
     private UUID patientProfileId;
 
     @Column(name = "care_need", nullable = false)
-    private String careNeed; // reducestress, support activity, calm agitation, ease depression, ease anxiety
+    private String careNeed; // stress_relief, activity_support, calming_agitation,easing_depression, reducing_anxiety
 
     @Column
     private String era; // 1960-1970

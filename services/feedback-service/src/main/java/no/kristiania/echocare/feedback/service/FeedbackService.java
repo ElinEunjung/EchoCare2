@@ -29,7 +29,7 @@ public class FeedbackService {
      */
     @Transactional
     public FeedbackEventDTO submitFeedback(SubmitFeedbackRequest request) {
-        // Validate request
+        // Validate required field
         if (request.liked() == null) {
             throw new IllegalArgumentException("Liked field cannot be null");
         }
@@ -39,8 +39,6 @@ public class FeedbackService {
         feedback.setPatientProfileId(request.patientProfileId());
         feedback.setPlaylistId(request.playlistId());
         feedback.setLiked(request.liked());
-        feedback.setDementiaStage(request.dementiaStage());
-        feedback.setCareNeed(request.careNeed());
 
         Feedback savedFeedback = feedbackRepository.save(feedback);
 

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.kristiania.echocare.playlist.api.dto.event.FeedbackEventDTO;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 /**
@@ -13,27 +14,23 @@ import org.springframework.stereotype.Component;
  * This consumer enables the playlist service to learn from caregiver feedback
  * and adapt playlist recommendations accordingly, implementing a feedback loop
  * for continuous improvement of music therapy recommendations.
+ *
+ * This consumer is only active when RabbitMQ is enabled.
  */
 @Component
+@ConditionalOnProperty(name = "spring.rabbitmq.enabled", havingValue = "true", matchIfMissing = true)
 @RequiredArgsConstructor
 @Slf4j
 public class FeedbackEventConsumer {
 
     @RabbitListener(queues = "${rabbitmq.queue.feedback-events}")
     public void handleFeedbackEvent(FeedbackEventDTO event) {
-        log.info("Received feedback event: type={}, feedbackId={}, patientProfileId={}",
-            event.getEventType(),
-            event.getFeedbackId(),
-            event.getPatientProfileId());
+        log.info("Received feedback event: feedbackId={}", event.getFeedbackId());
 
         try {
-            if (event.getEventType().equals("SUBMITTED")) {
-                handleFeedbackSubmitted(event);
-            } else {
-                log.warn("Unknown event type: {}", event.getEventType());
-            }
+            handleFeedbackSubmitted(event);
         } catch (Exception e) {
-            log.error("Failed to process feedback event: {}", event, e);
+            log.error("Failed to process feedback event", e);
         }
 
         if (event.getLiked() != null) {
@@ -49,12 +46,6 @@ public class FeedbackEventConsumer {
         log.info("Processing SUBMITTED feedback: feedbackId={}, patientProfileId={}",
             event.getFeedbackId(),
             event.getPatientProfileId());
-
-        // TODO: Fetch full feedback details via Feedback Service API if needed for processing
-        // Example: FeedbackDTO fullFeedback = feedbackServiceClient.getFeedbackById(event.getFeedbackId());
-
-        // TODO: Process feedback and adjust future recommendations
-        // Updating song preference scores based on likes/dislikes
     }
 }
 

@@ -27,11 +27,13 @@ public class ProfileCacheService {
     public ProfileDTO getProfile(UUID profileId) {
         ProfileDTO cached = cache.get(profileId);
 
+        // Fast! No network call
         if (cached != null) {
             log.info("Profile cache hit: {}", profileId);
             return cached;
         }
 
+        // If cache misses, fetch from Profile Service (network call)
         log.warn("Profile cache miss: {} - fetching from service", profileId);
         ProfileDTO profile = profileServiceClient.getProfile(profileId);
 
@@ -56,6 +58,22 @@ public class ProfileCacheService {
 
         cache.put(event.getProfileId(), profile);
         log.debug("Cache size: {}", cache.size());
+    }
+
+    /**
+     * Clear all cached profiles (useful for testing synchronous REST calls)
+     */
+    public void clearCache() {
+        int size = cache.size();
+        cache.clear();
+        log.info("Profile cache cleared - removed {} entries", size);
+    }
+
+    /**
+     * Get cache statistics
+     */
+    public int getCacheSize() {
+        return cache.size();
     }
 }
 

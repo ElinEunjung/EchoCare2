@@ -6,10 +6,13 @@ import no.kristiania.echocare.playlist.api.dto.SongDTO;
 import no.kristiania.echocare.playlist.api.dto.request.GeneratePlaylistRequest;
 import no.kristiania.echocare.playlist.api.dto.response.PlaylistResponse;
 import no.kristiania.echocare.playlist.service.PlaylistGeneratorService;
+import no.kristiania.echocare.playlist.service.ProfileCacheService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -19,6 +22,7 @@ import java.util.UUID;
 public class PlaylistController {
 
     private final PlaylistGeneratorService service;
+    private final ProfileCacheService profileCacheService;
 
     /**
      * User Story 2: Generate situation-aware playlist
@@ -45,9 +49,9 @@ public class PlaylistController {
     }
 
     /**
-     * Get song details - Used by Feedback Service
+     * Get song details by ID
      */
-    @GetMapping("/songs/{songId}")
+    @GetMapping("/song/{songId}")
     public ResponseEntity getSongById(@PathVariable UUID songId){
         log.info("Fetching song for songId: {}", songId);
         SongDTO song = service.getSongById(songId);
@@ -61,6 +65,35 @@ public class PlaylistController {
     public ResponseEntity health() {
 
         return ResponseEntity.ok("Playlist Service is running");
+    }
+
+    /**
+     * Clear profile cache - forces synchronous REST calls to Profile Service
+     * Useful for testing sync communication
+     */
+    @DeleteMapping("/cache/clear")
+    public ResponseEntity<Map<String, Object>> clearCache() {
+        int sizeBeforeClear = profileCacheService.getCacheSize();
+        profileCacheService.clearCache();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Profile cache cleared");
+        response.put("entriesRemoved", sizeBeforeClear);
+
+        log.info("Cache cleared via admin endpoint - removed {} entries", sizeBeforeClear);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * Get cache status
+     */
+    @GetMapping("/cache/status")
+    public ResponseEntity<Map<String, Object>> getCacheStatus() {
+        Map<String, Object> status = new HashMap<>();
+        status.put("cacheSize", profileCacheService.getCacheSize());
+        status.put("message", "Profile cache status");
+
+        return ResponseEntity.ok(status);
     }
 
 }

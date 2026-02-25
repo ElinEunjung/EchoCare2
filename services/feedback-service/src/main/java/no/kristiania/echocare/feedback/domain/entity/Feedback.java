@@ -24,11 +24,7 @@ public class Feedback {
     @Column(name = "playlist_id", nullable = false)
     private UUID playlistId;
 
-    private String dementiaStage; // mild/moderate/severe/null
-
-    private String careNeed;
-
-    private Boolean liked; // true/false/null
+    private Boolean liked; // true/false/null - did patient like the playlist?
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -38,14 +34,12 @@ public class Feedback {
         this.createdAt = LocalDateTime.now();
     }
 
-
-
-    // Constructor to convert from CreateFeedbackRequest
+    /**
+     * Constructor to convert from SubmitFeedbackRequest
+     */
     public Feedback(SubmitFeedbackRequest request) {
         this.playlistId = request.playlistId();
         this.patientProfileId = request.patientProfileId();
         this.liked = request.liked();
-        this.dementiaStage = request.dementiaStage();
-        this.careNeed = request.careNeed();
     }
 }

@@ -2,9 +2,19 @@
 -- SEED DATA for Playlist Service Database
 -- =============================================================================
 -- 100 carefully selected songs for dementia care music therapy
+--
+-- CURRENT CONFIG: spring.sql.init.mode: never (no auto-seeding)
+-- WHY: Prevents duplicate key errors when restarting with Docker DB
+--
+-- TO SEED DATABASE (if empty):
+-- 1. Edit application.yml: change "mode: never" to "mode: always"
+-- 2. Start/restart playlist-service (songs inserted automatically)
+-- 3. Change back: "mode: always" to "mode: never"
+-- 4. Done! Data persists in Docker PostgreSQL
+--
 -- Format: Individual INSERT statements with explicit UUIDs
--- Hibernate creates the tables via @Entity annotations (ddl-auto: create-drop)
--- NO auto-generated columns - all IDs provided explicitly
+-- Hibernate creates tables via @Entity (ddl-auto: update)
+-- =============================================================================
 
 -- CATEGORY 1: VERY CALMING (Energy 1.0-2.5, BPM 60-70)
 INSERT INTO songs (id, title, artist, release_year, bpm, energy) VALUES
