@@ -53,3 +53,28 @@ server:
 # JWT Configuration (if using Spring Security)
 jwt:
   secret: WOwTER+0vZAxLEr3LtLzJY1Y77gWWnnuQeUrvvTA9ZKvH47wGBwv1kJ+ghqrn7basSlRTQjjXNsaMJdZNbQRIw==
+
+# Spring Boot Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+  health:
+    defaults:
+      enabled: true
+
+info:
+  app:
+    name: Profile Service
+    description: Manages patient profiles and caregivers
+    version: 1.0.0
+
+logging:
+  level:
+    org.springframework.boot.actuate: DEBUG

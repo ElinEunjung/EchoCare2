@@ -42,3 +42,28 @@ server:
 
 jwt:
   secret: WOwTER+0vZAxLEr3LtLzJY1Y77gWWnnuQeUrvvTA9ZKvH47wGBwv1kJ+ghqrn7basSlRTQjjXNsaMJdZNbQRIw==
+
+# Spring Boot Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+  health:
+    defaults:
+      enabled: true
+
+info:
+    app:
+        name: Feedback Service
+        description: Service for handling user feedback
+        version: 1.0.0
+
+logging:
+  level:
+    org.springframework.boot.actuate: DEBUG
