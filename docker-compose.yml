@@ -1,5 +1,6 @@
 services:
-  # PostgreSQL for Profile Service
+  # ===== DATABASES =====
+
   profile-db:
     image: postgres:15-alpine
     container_name: echocare-profile-db
@@ -8,7 +9,7 @@ services:
       POSTGRES_USER: profile_user
       POSTGRES_PASSWORD: profile_pass
     ports:
-      - "5435:5432"  # Changed from 5432 to avoid conflict with local PostgreSQL
+      - "5435:5432"
     volumes:
       - profile-data:/var/lib/postgresql/data
     networks:
@@ -19,7 +20,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # PostgreSQL for Playlist Service
   playlist-db:
     image: postgres:15-alpine
     container_name: echocare-playlist-db
@@ -28,7 +28,7 @@ services:
       POSTGRES_USER: playlist_user
       POSTGRES_PASSWORD: playlist_pass
     ports:
-      - "5433:5432"  # Different host port!
+      - "5433:5432"
     volumes:
       - playlist-data:/var/lib/postgresql/data
     networks:
@@ -39,7 +39,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # PostgreSQL for Feedback Service
   feedback-db:
     image: postgres:15-alpine
     container_name: echocare-feedback-db
@@ -48,7 +47,7 @@ services:
       POSTGRES_USER: feedback_user
       POSTGRES_PASSWORD: feedback_pass
     ports:
-      - "5434:5432"  # Different host port!
+      - "5434:5432"
     volumes:
       - feedback-data:/var/lib/postgresql/data
     networks:
@@ -59,15 +58,13 @@ services:
       timeout: 5s
       retries: 5
 
+  # ===== PROFILE SERVICE (2 INSTANCES) =====
 
-  # Profile Service
-  profile-service:
+  profile-service-1:
     build:
       context: ./services/profile-service
       dockerfile: Dockerfile
-    container_name: profile-service
-    ports:
-      - "8081:8081"
+    container_name: profile-service-1
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SERVER_PORT: 8081
@@ -76,23 +73,50 @@ services:
       SPRING_DATASOURCE_PASSWORD: profile_pass
       RABBITMQ_HOST: echocare-rabbitmq
       RABBITMQ_PORT: 5672
+      INSTANCE_ID: profile-1
     depends_on:
       profile-db:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
     networks:
-      - echocare-network
+      echocare-network:
+        aliases:
+          - profile-service
     restart: unless-stopped
 
-  # Playlist Service
-  playlist-service:
+  profile-service-2:
+    build:
+      context: ./services/profile-service
+      dockerfile: Dockerfile
+    container_name: profile-service-2
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: 8081
+      SPRING_DATASOURCE_URL: jdbc:postgresql://echocare-profile-db:5432/profile_db
+      SPRING_DATASOURCE_USERNAME: profile_user
+      SPRING_DATASOURCE_PASSWORD: profile_pass
+      RABBITMQ_HOST: echocare-rabbitmq
+      RABBITMQ_PORT: 5672
+      INSTANCE_ID: profile-2
+    depends_on:
+      profile-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      echocare-network:
+        aliases:
+          - profile-service
+    restart: unless-stopped
+
+  # ===== PLAYLIST SERVICE (2 INSTANCES) =====
+
+  playlist-service-1:
     build:
       context: ./services/playlist-service
       dockerfile: Dockerfile
-    container_name: playlist-service
-    ports:
-      - "8082:8082"
+    container_name: playlist-service-1
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SERVER_PORT: 8082
@@ -101,23 +125,50 @@ services:
       SPRING_DATASOURCE_PASSWORD: playlist_pass
       RABBITMQ_HOST: echocare-rabbitmq
       RABBITMQ_PORT: 5672
+      INSTANCE_ID: playlist-1
     depends_on:
       playlist-db:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
     networks:
-      - echocare-network
+      echocare-network:
+        aliases:
+          - playlist-service
     restart: unless-stopped
 
-  # Feedback Service
-  feedback-service:
+  playlist-service-2:
+    build:
+      context: ./services/playlist-service
+      dockerfile: Dockerfile
+    container_name: playlist-service-2
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: 8082
+      SPRING_DATASOURCE_URL: jdbc:postgresql://echocare-playlist-db:5432/playlist_db
+      SPRING_DATASOURCE_USERNAME: playlist_user
+      SPRING_DATASOURCE_PASSWORD: playlist_pass
+      RABBITMQ_HOST: echocare-rabbitmq
+      RABBITMQ_PORT: 5672
+      INSTANCE_ID: playlist-2
+    depends_on:
+      playlist-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      echocare-network:
+        aliases:
+          - playlist-service
+    restart: unless-stopped
+
+  # ===== FEEDBACK SERVICE (2 INSTANCES) =====
+
+  feedback-service-1:
     build:
       context: ./services/feedback-service
       dockerfile: Dockerfile
-    container_name: feedback-service
-    ports:
-      - "8083:8083"
+    container_name: feedback-service-1
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SERVER_PORT: 8083
@@ -126,40 +177,76 @@ services:
       SPRING_DATASOURCE_PASSWORD: feedback_pass
       RABBITMQ_HOST: echocare-rabbitmq
       RABBITMQ_PORT: 5672
+      INSTANCE_ID: feedback-1
     depends_on:
       feedback-db:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
     networks:
-      - echocare-network
+      echocare-network:
+        aliases:
+          - feedback-service
     restart: unless-stopped
 
-  # API Gateway
+  feedback-service-2:
+    build:
+      context: ./services/feedback-service
+      dockerfile: Dockerfile
+    container_name: feedback-service-2
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: 8083
+      SPRING_DATASOURCE_URL: jdbc:postgresql://echocare-feedback-db:5432/feedback_db
+      SPRING_DATASOURCE_USERNAME: feedback_user
+      SPRING_DATASOURCE_PASSWORD: feedback_pass
+      RABBITMQ_HOST: echocare-rabbitmq
+      RABBITMQ_PORT: 5672
+      INSTANCE_ID: feedback-2
+    depends_on:
+      feedback-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      echocare-network:
+        aliases:
+          - feedback-service
+    restart: unless-stopped
+
+  # ===== API GATEWAY (SINGLE ENTRY POINT) =====
+
   gateway-service:
     build:
       context: ./services/gateway-service
       dockerfile: Dockerfile
     container_name: echocare-gateway
     ports:
-      - "8080:8080"
+      - "8080:8080"  # ONLY THIS PORT IS EXPOSED!
     environment:
       SPRING_PROFILES_ACTIVE: docker
       JWT_SECRET: WOwTER+0vZAxLEr3LtLzJY1Y77gWWnnuQeUrvvTA9ZKvH47wGBwv1kJ+ghqrn7basSlRTQjjXNsaMJdZNbQRIw==
     depends_on:
       rabbitmq:
         condition: service_healthy
-      profile-service:
+      profile-service-1:
         condition: service_started
-      playlist-service:
+      profile-service-2:
         condition: service_started
-      feedback-service:
+      playlist-service-1:
+        condition: service_started
+      playlist-service-2:
+        condition: service_started
+      feedback-service-1:
+        condition: service_started
+      feedback-service-2:
         condition: service_started
     networks:
       - echocare-network
     restart: unless-stopped
 
-  # RabbitMQ
+  # ===== RABBITMQ =====
+
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: echocare-rabbitmq
@@ -167,8 +254,8 @@ services:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
     ports:
-      - "5672:5672"   # AMQP port (for services to connect)
-      - "15672:15672" # Management UI (for monitoring)
+      - "5672:5672"
+      - "15672:15672"
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
       - rabbitmq-logs:/var/log/rabbitmq
