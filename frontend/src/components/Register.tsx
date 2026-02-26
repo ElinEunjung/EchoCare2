@@ -8,7 +8,7 @@ export default function Register() {
   const [formData, setFormData] = useState<RegisterRequest>({
     email: '',
     password: '',
-    fullName: '',
+    username: '',
     role: 'CAREGIVER',
   });
   const [error, setError] = useState('');
@@ -45,13 +45,13 @@ export default function Register() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Full Name
+              Username
             </label>
             <input
               type="text"
               required
-              value={formData.fullName}
-              onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+              value={formData.username}
+              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="John Doe"
             />

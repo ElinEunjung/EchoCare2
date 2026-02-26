@@ -2,7 +2,7 @@
 export interface RegisterRequest {
   email: string;
   password: string;
-  fullName: string;
+  username: string;
   role: 'CAREGIVER' | 'ADMIN';
 }
 
