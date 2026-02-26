@@ -1,0 +1,32 @@
+# Configuration for Feedback Service
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5434/feedback_db
+    username: feedback_user
+    password: feedback_pass
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+
+rabbitmq:
+  exchange:
+    feedback: feedback.exchange
+  routing-key:
+    feedback-submitted: feedback.submitted
+
+server:
+  port: 8083
+
+info:
+  app:
+    name: Feedback Service
+    description: Collects and processes user feedback
+    version: 1.0.0
+

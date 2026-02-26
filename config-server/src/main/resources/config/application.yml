@@ -1,0 +1,52 @@
+# ======================================================================
+# SHARED CONFIGURATION FOR ALL MICROSERVICES
+# This file is served by Config Server to ALL services
+# Service-specific configs (profile-service.yml, etc.) override these
+# ======================================================================
+
+# Common configuration for ALL services
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    listener:
+      simple:
+        acknowledge-mode: auto
+        prefetch: 1
+        retry:
+          enabled: true
+          initial-interval: 1000
+          max-attempts: 3
+          multiplier: 2.0
+
+# Spring Boot Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized  # Shows details only for authorized users (MVP-friendly)
+      show-components: when-authorized
+  health:
+    defaults:
+      enabled: true
+    db:
+      enabled: true  # Database health check (services without DB override this)
+    rabbit:
+      enabled: true  # RabbitMQ health check (services without RabbitMQ override this)
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    no.kristiania.echocare: DEBUG
+    org.springframework.boot.actuate: DEBUG
+
+# JWT Configuration (shared across all services)
+jwt:
+  secret: WOwTER+0vZAxLEr3LtLzJY1Y77gWWnnuQeUrvvTA9ZKvH47wGBwv1kJ+ghqrn7basSlRTQjjXNsaMJdZNbQRIw==

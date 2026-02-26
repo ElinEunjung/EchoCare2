@@ -1,0 +1,43 @@
+# ======================================================================
+# CONFIG SERVER'S OWN CONFIGURATION
+# This file configures the Config Server application itself
+# (NOT the configurations it serves to other services)
+# ======================================================================
+
+spring:
+  application:
+    name: config-server
+  profiles:
+    active: native  # Use native profile (filesystem-based, not Git)
+
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/config  # Where service configs are stored
+
+server:
+  port: 8888  # Config Server runs on port 8888
+
+logging:
+  level:
+    org.springframework.cloud: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+  health:
+    defaults:
+      enabled: true
+
+info:
+  app:
+    name: Config Server
+    description: Centralized configuration server for EchoCare microservices
+    version: 1.0.0

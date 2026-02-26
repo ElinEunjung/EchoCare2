@@ -1,0 +1,38 @@
+# Configuration for Profile Service
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5435/profile_db
+    username: profile_user
+    password: profile_pass
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate  # Changed from 'update' to 'validate' - Flyway manages schema
+    show-sql: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true  # For existing databases
+    locations: classpath:db/migration
+    validate-on-migrate: true
+
+# Custom properties for exchanges and routing keys
+# Note: Profile Service is a PUBLISHER only - it does not create queues
+# Consumers (like playlist-service) create their own queues and bind to this exchange
+rabbitmq:
+  exchange:
+    profile: profile.exchange
+  routing-key:
+    profile-created: profile.created
+    profile-updated: profile.updated
+
+server:
+  port: 9000
+
+info:
+  app:
+    name: Profile Service
+    description: Manages patient profiles and caregivers
+    version: 1.0.0
+

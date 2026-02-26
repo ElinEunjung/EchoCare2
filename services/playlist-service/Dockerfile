@@ -6,6 +6,7 @@ WORKDIR /app
 COPY mvnw mvnw.cmd ./
 COPY .mvn .mvn
 COPY pom.xml .
+
 RUN ./mvnw dependency:go-offline -q
 
 # Copy source and build
@@ -16,9 +17,11 @@ RUN ./mvnw package -DskipTests -q
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
+# Install curl for healthcheck
+RUN apk add --no-cache curl
+
 COPY --from=build /app/target/playlist-service-*.jar app.jar
 
 EXPOSE 8082
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
-

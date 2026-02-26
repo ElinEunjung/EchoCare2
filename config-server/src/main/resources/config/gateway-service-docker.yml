@@ -1,0 +1,75 @@
+# Configuration for Gateway Service (Docker Profile)
+spring:
+  application:
+    name: gateway-service
+
+  cloud:
+    gateway:
+      routes:
+        # Auth endpoints (public - no JWT needed for registration and login)
+        - id: auth-route
+          uri: http://profile-service:9000
+          predicates:
+            - Path=/api/auth/**
+
+        # Caregiver endpoints (public - no JWT needed)
+        - id: caregiver-route
+          uri: http://profile-service:9000
+          predicates:
+            - Path=/api/caregivers/**
+
+        # Profile Service (requires JWT)
+        - id: profile-route
+          uri: http://profile-service:9000
+          predicates:
+            - Path=/api/profiles/**
+          filters:
+            - JwtAuthenticationFilter
+
+        # Playlist Service (requires JWT)
+        - id: playlist-route
+          uri: http://playlist-service:8082
+          predicates:
+            - Path=/api/playlists/**
+          filters:
+            - JwtAuthenticationFilter
+
+        # Feedback Service (requires JWT)
+        - id: feedback-route
+          uri: http://feedback-service:8083
+          predicates:
+            - Path=/api/feedback/**
+          filters:
+            - JwtAuthenticationFilter
+
+        # Health check routes (public access for monitoring)
+        - id: profile-actuator
+          uri: http://profile-service:9000
+          predicates:
+            - Path=/services/profile/actuator/**
+          filters:
+            - RewritePath=/services/profile/actuator/(?<segment>.*), /actuator/$\{segment}
+
+        - id: playlist-actuator
+          uri: http://playlist-service:8082
+          predicates:
+            - Path=/services/playlist/actuator/**
+          filters:
+            - RewritePath=/services/playlist/actuator/(?<segment>.*), /actuator/$\{segment}
+
+        - id: feedback-actuator
+          uri: http://feedback-service:8083
+          predicates:
+            - Path=/services/feedback/actuator/**
+          filters:
+            - RewritePath=/services/feedback/actuator/(?<segment>.*), /actuator/$\{segment}
+
+server:
+  port: 8080
+
+info:
+  app:
+    name: Gateway Service
+    description: API Gateway for EchoCare microservices
+    version: 1.0.0
+

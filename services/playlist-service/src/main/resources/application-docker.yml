@@ -1,6 +1,9 @@
 spring:
   application:
     name: playlist-service
+  cloud:
+    config:
+      uri: http://echocare-config-server:8888
 
   datasource:
     url: jdbc:postgresql://echocare-playlist-db:5432/playlist_db

@@ -16,9 +16,11 @@ RUN ./mvnw package -DskipTests -q
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
+# Install curl for healthcheck
+RUN apk add --no-cache curl
+
 COPY --from=build /app/target/profile-service-*.jar app.jar
 
 EXPOSE 8081
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
-

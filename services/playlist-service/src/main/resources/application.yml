@@ -1,89 +1,11 @@
 spring:
+  config:
+    import: "optional:configserver:http://echocare-config-server:8888"
   application:
     name: playlist-service
-
-  datasource:
-    url: jdbc:postgresql://localhost:5433/playlist_db
-    username: playlist_user
-    password: playlist_pass
-    driver-class-name: org.postgresql.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: validate  # Changed from 'update' to 'validate' - Flyway manages schema
-    properties:
-      hibernate:
-        format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true
-
-
-  flyway:
-    enabled: true
-    baseline-on-migrate: true  # For existing databases
-    locations: classpath:db/migration
-    validate-on-migrate: true
-
-  rabbitmq:
-    enabled: true  # Set to false to run without RabbitMQ (sync-only mode)
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
-    virtual-host: /
-
-rabbitmq:
-  exchange:
-    profile: profile.exchange # Subscribes to profile events
-    feedback: feedback.exchange # Subscribes to feedback events
-  queue:
-    profile-events: playlist.profile-events.queue # Own queue for profile events
-    feedback-events: playlist.feedback-events.queue # Own queue for feedback events
-  routing-key:
-    profile-created: profile.created
-    profile-updated: profile.updated
-    feedback-submitted: feedback.submitted
-
-
-server:
-  port: 8082
-
-
-# Profile Service URL (used for fetching user profiles)
-services:
-  profile:
-    url: http://localhost:8081
-
-jwt:
-  secret: WOwTER+0vZAxLEr3LtLzJY1Y77gWWnnuQeUrvvTA9ZKvH47wGBwv1kJ+ghqrn7basSlRTQjjXNsaMJdZNbQRIw==
-
-# Spring Boot Actuator Configuration
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
-      base-path: /actuator
-  endpoint:
-    health:
-      show-details: when-authorized  # Shows details only for authorized users (MVP-friendly)
-      show-components: when-authorized
-  health:
-    defaults:
-      enabled: true
-    db:
-      enabled: true  # Database health check
-    rabbit:
-      enabled: true  # RabbitMQ health check
-
-info:
-  app:
-    name: Playlist Service
-    description: Generates personalized music playlists
-    version: 1.0.0
-
-logging:
-  level:
-    org.hibernate.SQL: DEBUG
-    no.kristiania.echocare: DEBUG
-    org.springframework.boot.actuate: DEBUG
+  cloud:
+    config:
+      fail-fast: false # Don't fail if Config Server is down
+      retry:
+        max-attempts: 3
+        initial-interval: 1000

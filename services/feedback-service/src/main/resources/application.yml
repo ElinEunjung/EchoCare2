@@ -1,67 +1,11 @@
 spring:
+  config:
+    import: "optional:configserver:http://echocare-config-server:8888"
   application:
-    name: feedback-service   # unique per service
-  datasource:
-    url: jdbc:postgresql://localhost:5434/feedback_db
-    username: feedback_user
-    password: feedback_pass
-    driver-class-name: org.postgresql.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true
-
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
-    virtual-host: /
-
-rabbitmq:
-  exchange:
-    feedback: feedback.exchange
-  routing-key:
-    feedback-submitted: feedback.submitted
-
-server:
-  port: 8083
-
-jwt:
-  secret: WOwTER+0vZAxLEr3LtLzJY1Y77gWWnnuQeUrvvTA9ZKvH47wGBwv1kJ+ghqrn7basSlRTQjjXNsaMJdZNbQRIw==
-
-# Spring Boot Actuator Configuration
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
-      base-path: /actuator
-  endpoint:
-    health:
-      show-details: when-authorized  # Shows details only for authorized users (MVP-friendly)
-      show-components: when-authorized
-  health:
-    defaults:
-      enabled: true
-    db:
-      enabled: true  # Database health check
-    rabbit:
-      enabled: true  # RabbitMQ health check
-
-info:
-  app:
-    name: Feedback Service
-    description: Collects and processes user feedback
-    version: 1.0.0
-
-logging:
-  level:
-    org.hibernate.SQL: DEBUG
-    no.kristiania.echocare: DEBUG
-    org.springframework.boot.actuate: DEBUG
+    name: feedback-service
+  cloud:
+    config:
+      fail-fast: false # Don't fail if Config Server is down
+      retry:
+        max-attempts: 3
+        initial-interval: 1000

@@ -1,0 +1,49 @@
+# Configuration for Playlist Service (Docker Profile)
+spring:
+  datasource:
+    url: jdbc:postgresql://echocare-playlist-db:5432/playlist_db
+    username: playlist_user
+    password: playlist_pass
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate  # Changed from 'update' to 'validate' - Flyway manages schema
+    show-sql: true
+
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true  # For existing databases
+    locations: classpath:db/migration
+    validate-on-migrate: true
+
+rabbitmq:
+  exchange:
+    profile: profile.exchange
+    feedback: feedback.exchange
+  queue:
+    profile-events: playlist.profile-events.queue
+    feedback-events: playlist.feedback-events.queue
+  routing-key:
+    profile-created: profile.created
+    profile-updated: profile.updated
+    feedback-submitted: feedback.submitted
+
+# Profile Service URL (used for fetching user profiles)
+services:
+  profile:
+    url: http://profile-service:9000
+
+server:
+  port: 8082
+
+info:
+  app:
+    name: Playlist Service
+    description: Generates personalized music playlists
+    version: 1.0.0
+

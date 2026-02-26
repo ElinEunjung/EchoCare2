@@ -23,7 +23,7 @@ import java.util.Base64;
 /**
  * Gateway filter that validates JWT Bearer tokens on every protected route.
  *
- * Registered as a named filter "JwtAuthenticationFilter" in application.yaml.
+ * Registered as a named filter "JwtAuthenticationFilter" in application.yml.backup.
  * Routes listed under /api/auth/** are skipped (handled by the open auth-route).
  *
  * On success the authenticated caregiver ID is forwarded downstream via
