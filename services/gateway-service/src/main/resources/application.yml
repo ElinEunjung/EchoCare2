@@ -9,4 +9,11 @@ spring:
       retry:
         max-attempts: 3
         initial-interval: 1000
+    loadbalancer:
+      cache:
+        enabled: false  # Disable caching to see load balancing in real-time
+      ribbon:
+        enabled: false  # Use Spring Cloud LoadBalancer, not Ribbon
+      consul:
+        enabled: true  # Enable Consul-based service discovery for load balancing
 

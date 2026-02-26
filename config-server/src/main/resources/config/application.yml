@@ -20,6 +20,11 @@ spring:
         hostname: ${spring.application.name}
       config:
         enabled: false # disable Consul config (I use Config Server)
+    loadbalancer:
+      cache:
+        enabled: false  # Disable caching for real-time load balancing
+      ribbon:
+        enabled: false  # Use Spring Cloud LoadBalancer instead of Ribbon
   rabbitmq:
     # host and port are set via environment variables (RABBITMQ_HOST, RABBITMQ_PORT)
     # Do NOT hardcode localhost here - it breaks Docker networking

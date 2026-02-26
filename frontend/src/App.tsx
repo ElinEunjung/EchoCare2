@@ -1,35 +1,132 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Login from './components/Login';
+import Register from './components/Register';
+import Dashboard from './components/Dashboard';
+import ProfileList from './components/ProfileList';
+import ProfileForm from './components/ProfileForm';
+import PlaylistGenerator from './components/PlaylistGenerator';
+import PlaylistHistory from './components/PlaylistHistory';
+import FeedbackList from './components/FeedbackList';
+import FeedbackForm from './components/FeedbackForm';
+import ProtectedRoute from './components/ProtectedRoute';
+import { authService } from './api/authService';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <Router>
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <Routes>
+          {/* Public routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
+          {/* Protected routes */}
+          <Route
+            path="/"
+            element={
+              authService.isAuthenticated() ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
+          />
+          
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Profile routes */}
+          <Route
+            path="/profiles"
+            element={
+              <ProtectedRoute>
+                <ProfileList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profiles/create"
+            element={
+              <ProtectedRoute>
+                <ProfileForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profiles/edit/:id"
+            element={
+              <ProtectedRoute>
+                <ProfileForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profiles/:id"
+            element={
+              <ProtectedRoute>
+                <ProfileList />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Playlist routes */}
+          <Route
+            path="/playlists"
+            element={
+              <ProtectedRoute>
+                <PlaylistGenerator />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/playlists/history"
+            element={
+              <ProtectedRoute>
+                <PlaylistHistory />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Feedback routes */}
+          <Route
+            path="/feedback"
+            element={
+              <ProtectedRoute>
+                <FeedbackList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/feedback/create"
+            element={
+              <ProtectedRoute>
+                <FeedbackForm />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/feedback/song/:songId"
+            element={
+              <ProtectedRoute>
+                <FeedbackForm />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Catch all */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </Router>
+  );
 }
 
-export default App
+export default App;
