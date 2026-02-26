@@ -1,4 +1,4 @@
-# Configuration for Profile Service
+# Configuration for Profile Service (Local Development)
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5435/profile_db

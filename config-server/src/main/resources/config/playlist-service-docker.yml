@@ -10,11 +10,6 @@ spring:
       ddl-auto: validate  # Changed from 'update' to 'validate' - Flyway manages schema
     show-sql: true
 
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
-
   flyway:
     enabled: true
     baseline-on-migrate: true  # For existing databases

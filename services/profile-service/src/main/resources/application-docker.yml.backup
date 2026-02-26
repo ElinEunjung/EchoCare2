@@ -24,7 +24,7 @@ spring:
     validate-on-migrate: true
 
   rabbitmq:
-    host: rabbitmq
+    host: echocare-rabbitmq
     port: 5672
     username: guest
     password: guest

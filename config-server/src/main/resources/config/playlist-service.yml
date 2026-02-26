@@ -1,9 +1,9 @@
-# Configuration for Playlist Service
+# Configuration for Playlist Service (Local Development)
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5435/profile_db
-    username: profile_user
-    password: profile_pass
+    url: jdbc:postgresql://localhost:5433/playlist_db
+    username: playlist_user
+    password: playlist_pass
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -22,21 +22,24 @@ spring:
     validate-on-migrate: true
 
 # Custom properties for exchanges and routing keys
-# Note: Profile Service is a PUBLISHER only - it does not create queues
-# Consumers (like playlist-service) create their own queues and bind to this exchange
 rabbitmq:
   exchange:
     profile: profile.exchange
+    feedback: feedback.exchange
+  queue:
+    profile-events: playlist.profile-events.queue
+    feedback-events: playlist.feedback-events.queue
   routing-key:
     profile-created: profile.created
     profile-updated: profile.updated
+    feedback-submitted: feedback.submitted
 
 server:
-  port: 8081
+  port: 8082
 
 info:
   app:
-    name: Profile Service
-    description: Manages patient profiles and caregivers
+    name: Playlist Service
+    description: Generates personalized music playlists
     version: 1.0.0
 

@@ -8,19 +8,19 @@ spring:
       routes:
         # Auth endpoints (public - no JWT needed for registration and login)
         - id: auth-route
-          uri: http://profile-service:9000
+          uri: lb://profile-service
           predicates:
             - Path=/api/auth/**
 
         # Caregiver endpoints (public - no JWT needed)
         - id: caregiver-route
-          uri: http://profile-service:9000
+          uri: lb://profile-service
           predicates:
             - Path=/api/caregivers/**
 
         # Profile Service (requires JWT)
         - id: profile-route
-          uri: http://profile-service:9000
+          uri: lb://profile-service
           predicates:
             - Path=/api/profiles/**
           filters:
@@ -28,7 +28,7 @@ spring:
 
         # Playlist Service (requires JWT)
         - id: playlist-route
-          uri: http://playlist-service:8082
+          uri: lb://playlist-service
           predicates:
             - Path=/api/playlists/**
           filters:
@@ -36,7 +36,7 @@ spring:
 
         # Feedback Service (requires JWT)
         - id: feedback-route
-          uri: http://feedback-service:8083
+          uri: lb://feedback-service
           predicates:
             - Path=/api/feedback/**
           filters:
@@ -44,21 +44,21 @@ spring:
 
         # Health check routes (public access for monitoring)
         - id: profile-actuator
-          uri: http://profile-service:9000
+          uri: lb://profile-service
           predicates:
             - Path=/services/profile/actuator/**
           filters:
             - RewritePath=/services/profile/actuator/(?<segment>.*), /actuator/$\{segment}
 
         - id: playlist-actuator
-          uri: http://playlist-service:8082
+          uri: lb://playlist-service
           predicates:
             - Path=/services/playlist/actuator/**
           filters:
             - RewritePath=/services/playlist/actuator/(?<segment>.*), /actuator/$\{segment}
 
         - id: feedback-actuator
-          uri: http://feedback-service:8083
+          uri: lb://feedback-service
           predicates:
             - Path=/services/feedback/actuator/**
           filters:

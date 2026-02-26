@@ -1,4 +1,4 @@
-# Configuration for Feedback Service
+# Configuration for Feedback Service (Local Development)
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5434/feedback_db

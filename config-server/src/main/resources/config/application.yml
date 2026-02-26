@@ -6,9 +6,23 @@
 
 # Common configuration for ALL services
 spring:
+  cloud:
+    consul:
+      host: consul
+      port: 8500
+      discovery:
+        enabled: true
+        fail-fast: false # allows service to start without Consul
+        health-check-interval: 10s
+        health-check-timeout: 5s
+        instance-id: ${spring.application.name}-${INSTANCE_ID:default}
+        prefer-ip-address: false
+        hostname: ${spring.application.name}
+      config:
+        enabled: false # disable Consul config (I use Config Server)
   rabbitmq:
-    host: localhost
-    port: 5672
+    # host and port are set via environment variables (RABBITMQ_HOST, RABBITMQ_PORT)
+    # Do NOT hardcode localhost here - it breaks Docker networking
     username: guest
     password: guest
     virtual-host: /

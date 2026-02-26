@@ -1,4 +1,23 @@
 services:
+  # ===== CONSUL (Service Discovery) =====
+
+  consul:
+    image: consul:1.15
+    container_name: echocare-consul
+    ports:
+      - "8500:8500"  # Consul UI and API
+      - "8600:8600/udp"  # Consul DNS
+    command: agent -server -ui -bootstrap-expect=1 -client=0.0.0.0
+    networks:
+      - echocare-network
+    healthcheck:
+      test: ["CMD", "consul", "members"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
   # ===== CONFIG SERVER =====
 
   config-server:
@@ -28,7 +47,7 @@ services:
       POSTGRES_USER: profile_user
       POSTGRES_PASSWORD: profile_pass
     ports:
-      - "5435:5432"
+      - "5435:5432" # Host port 5435 → Container port 5432
     volumes:
       - profile-data:/var/lib/postgresql/data
     networks:
@@ -47,7 +66,7 @@ services:
       POSTGRES_USER: playlist_user
       POSTGRES_PASSWORD: playlist_pass
     ports:
-      - "5433:5432"
+      - "5433:5432" # Host port 5433 → Container port 5432
     volumes:
       - playlist-data:/var/lib/postgresql/data
     networks:
@@ -66,7 +85,7 @@ services:
       POSTGRES_USER: feedback_user
       POSTGRES_PASSWORD: feedback_pass
     ports:
-      - "5434:5432"
+      - "5434:5432"   # Host port 5434 → Container port 5432
     volumes:
       - feedback-data:/var/lib/postgresql/data
     networks:
@@ -87,13 +106,17 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_CLOUD_CONFIG_URI: http://echocare-config-server:8888
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
       SPRING_DATASOURCE_URL: jdbc:postgresql://echocare-profile-db:5432/profile_db
       SPRING_DATASOURCE_USERNAME: profile_user
       SPRING_DATASOURCE_PASSWORD: profile_pass
-      RABBITMQ_HOST: echocare-rabbitmq
-      RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_HOST: echocare-rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
       INSTANCE_ID: profile-1
     depends_on:
+      consul:
+        condition: service_healthy
       config-server:
         condition: service_healthy
       profile-db:
@@ -120,13 +143,17 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_CLOUD_CONFIG_URI: http://echocare-config-server:8888
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
       SPRING_DATASOURCE_URL: jdbc:postgresql://echocare-profile-db:5432/profile_db
       SPRING_DATASOURCE_USERNAME: profile_user
       SPRING_DATASOURCE_PASSWORD: profile_pass
-      RABBITMQ_HOST: echocare-rabbitmq
-      RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_HOST: echocare-rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
       INSTANCE_ID: profile-2
     depends_on:
+      consul:
+        condition: service_healthy
       config-server:
         condition: service_healthy
       profile-db:
@@ -154,13 +181,20 @@ services:
     container_name: playlist-service-1
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      SPRING_CLOUD_CONFIG_URI: http://echocare-config-server:8888
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
       SPRING_DATASOURCE_URL: jdbc:postgresql://echocare-playlist-db:5432/playlist_db
       SPRING_DATASOURCE_USERNAME: playlist_user
       SPRING_DATASOURCE_PASSWORD: playlist_pass
-      RABBITMQ_HOST: echocare-rabbitmq
-      RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_HOST: echocare-rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
       INSTANCE_ID: playlist-1
     depends_on:
+      consul:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
       playlist-db:
         condition: service_healthy
       rabbitmq:
@@ -184,13 +218,20 @@ services:
     container_name: playlist-service-2
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      SPRING_CLOUD_CONFIG_URI: http://echocare-config-server:8888
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
       SPRING_DATASOURCE_URL: jdbc:postgresql://echocare-playlist-db:5432/playlist_db
       SPRING_DATASOURCE_USERNAME: playlist_user
       SPRING_DATASOURCE_PASSWORD: playlist_pass
-      RABBITMQ_HOST: echocare-rabbitmq
-      RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_HOST: echocare-rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
       INSTANCE_ID: playlist-2
     depends_on:
+      consul:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
       playlist-db:
         condition: service_healthy
       rabbitmq:
@@ -216,13 +257,20 @@ services:
     container_name: feedback-service-1
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      SPRING_CLOUD_CONFIG_URI: http://echocare-config-server:8888
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
       SPRING_DATASOURCE_URL: jdbc:postgresql://echocare-feedback-db:5432/feedback_db
       SPRING_DATASOURCE_USERNAME: feedback_user
       SPRING_DATASOURCE_PASSWORD: feedback_pass
-      RABBITMQ_HOST: echocare-rabbitmq
-      RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_HOST: echocare-rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
       INSTANCE_ID: feedback-1
     depends_on:
+      consul:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
       feedback-db:
         condition: service_healthy
       rabbitmq:
@@ -246,13 +294,20 @@ services:
     container_name: feedback-service-2
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      SPRING_CLOUD_CONFIG_URI: http://echocare-config-server:8888
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
       SPRING_DATASOURCE_URL: jdbc:postgresql://echocare-feedback-db:5432/feedback_db
       SPRING_DATASOURCE_USERNAME: feedback_user
       SPRING_DATASOURCE_PASSWORD: feedback_pass
-      RABBITMQ_HOST: echocare-rabbitmq
-      RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_HOST: echocare-rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
       INSTANCE_ID: feedback-2
     depends_on:
+      consul:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
       feedback-db:
         condition: service_healthy
       rabbitmq:
@@ -281,8 +336,12 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_CLOUD_CONFIG_URI: http://echocare-config-server:8888
+      SPRING_CLOUD_CONSUL_HOST: consul
+      SPRING_CLOUD_CONSUL_PORT: 8500
       JWT_SECRET: WOwTER+0vZAxLEr3LtLzJY1Y77gWWnnuQeUrvvTA9ZKvH47wGBwv1kJ+ghqrn7basSlRTQjjXNsaMJdZNbQRIw==
     depends_on:
+      consul:
+        condition: service_healthy
       config-server:
         condition: service_healthy
       rabbitmq:
