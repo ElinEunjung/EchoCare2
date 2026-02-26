@@ -1,6 +1,9 @@
 spring:
   application:
     name: feedback-service   # unique per service
+  cloud:
+    config:
+      uri: http://echocare-config-server:8888
   datasource:
     url: jdbc:postgresql://echocare-feedback-db:5432/feedback_db
     username: feedback_user

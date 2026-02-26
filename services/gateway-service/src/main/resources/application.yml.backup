@@ -5,21 +5,21 @@ spring:
   cloud:
     gateway:
       routes:
-        # Auth endpoints (public - no JWT needed)
+        # Auth endpoints (public - no JWT needed for registration and login)
         - id: auth-route
-          uri: http://profile-service:8081
+          uri: http://localhost:8081
           predicates:
             - Path=/api/auth/**
 
         # Caregiver endpoints (public - no JWT needed)
         - id: caregiver-route
-          uri: http://profile-service:8081
+          uri: http://localhost:8081
           predicates:
             - Path=/api/caregivers/**
 
         # Profile Service (requires JWT)
         - id: profile-route
-          uri: http://profile-service:8081
+          uri: http://localhost:8081
           predicates:
             - Path=/api/profiles/**
           filters:
@@ -27,7 +27,7 @@ spring:
 
         # Playlist Service (requires JWT)
         - id: playlist-route
-          uri: http://playlist-service:8082
+          uri: http://localhost:8082
           predicates:
             - Path=/api/playlists/**
           filters:
@@ -35,36 +35,36 @@ spring:
 
         # Feedback Service (requires JWT)
         - id: feedback-route
-          uri: http://feedback-service:8083
+          uri: http://localhost:8083
           predicates:
             - Path=/api/feedback/**
           filters:
             - JwtAuthenticationFilter
 
-        # Health check routes (no JWT needed)
+        # Health check routes (public access for monitoring)
         - id: profile-actuator
-          uri: http://profile-service:8081
+          uri: http://localhost:8081
           predicates:
             - Path=/services/profile/actuator/**
           filters:
             - RewritePath=/services/profile/actuator/(?<segment>.*), /actuator/$\{segment}
 
         - id: playlist-actuator
-          uri: http://playlist-service:8082
+          uri: http://localhost:8082
           predicates:
             - Path=/services/playlist/actuator/**
           filters:
             - RewritePath=/services/playlist/actuator/(?<segment>.*), /actuator/$\{segment}
 
         - id: feedback-actuator
-          uri: http://feedback-service:8083
+          uri: http://localhost:8083
           predicates:
             - Path=/services/feedback/actuator/**
           filters:
             - RewritePath=/services/feedback/actuator/(?<segment>.*), /actuator/$\{segment}
 
 jwt:
-  secret: ${JWT_SECRET}
+  secret: WOwTER+0vZAxLEr3LtLzJY1Y77gWWnnuQeUrvvTA9ZKvH47wGBwv1kJ+ghqrn7basSlRTQjjXNsaMJdZNbQRIw==
 
 server:
   port: 8080
@@ -78,7 +78,18 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,gateway
+      base-path: /actuator
   endpoint:
     health:
-      show-details: always
+      show-details: when-authorized
+      show-components: when-authorized
+  health:
+    defaults:
+      enabled: true
+
+info:
+  app:
+    name: Gateway Service
+    description: API Gateway for EchoCare microservices
+    version: 1.0.0

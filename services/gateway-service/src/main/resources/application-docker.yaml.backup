@@ -1,0 +1,88 @@
+spring:
+  application:
+    name: gateway-service
+
+  cloud:
+    config:
+      uri: http://echocare-config-server:8888
+    gateway:
+      routes:
+        # Auth endpoints (public - no JWT needed)
+        - id: auth-route
+          uri: http://profile-service:8081
+          predicates:
+            - Path=/api/auth/**
+
+        # Caregiver endpoints (public - no JWT needed)
+        - id: caregiver-route
+          uri: http://profile-service:8081
+          predicates:
+            - Path=/api/caregivers/**
+
+        # Profile Service (requires JWT)
+        - id: profile-route
+          uri: http://profile-service:8081
+          predicates:
+            - Path=/api/profiles/**
+          filters:
+            - JwtAuthenticationFilter
+
+        # Playlist Service (requires JWT)
+        - id: playlist-route
+          uri: http://playlist-service:8082
+          predicates:
+            - Path=/api/playlists/**
+          filters:
+            - JwtAuthenticationFilter
+
+        # Feedback Service (requires JWT)
+        - id: feedback-route
+          uri: http://feedback-service:8083
+          predicates:
+            - Path=/api/feedback/**
+          filters:
+            - JwtAuthenticationFilter
+
+        # Health check routes (no JWT needed)
+        - id: profile-actuator
+          uri: http://profile-service:8081
+          predicates:
+            - Path=/services/profile/actuator/**
+          filters:
+            - RewritePath=/services/profile/actuator/(?<segment>.*), /actuator/$\{segment}
+
+        - id: playlist-actuator
+          uri: http://playlist-service:8082
+          predicates:
+            - Path=/services/playlist/actuator/**
+          filters:
+            - RewritePath=/services/playlist/actuator/(?<segment>.*), /actuator/$\{segment}
+
+        - id: feedback-actuator
+          uri: http://feedback-service:8083
+          predicates:
+            - Path=/services/feedback/actuator/**
+          filters:
+            - RewritePath=/services/feedback/actuator/(?<segment>.*), /actuator/$\{segment}
+
+jwt:
+  secret: ${JWT_SECRET}
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    no.kristiania.echocare: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+

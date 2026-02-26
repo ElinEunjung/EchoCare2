@@ -1,6 +1,9 @@
 spring:
   application:
     name: profile-service
+  cloud:
+    config:
+      uri: http://echocare-config-server:8888
   datasource:
     url: jdbc:postgresql://echocare-profile-db:5432/profile_db
     username: profile_user
@@ -46,8 +49,8 @@ rabbitmq:
     profile-created: profile.created
     profile-updated: profile.updated
 
-server:
-  port: 8081
+# Note: server.port is configured in Config Server (profile-service-docker.yml)
+# Remove local port config to let Config Server control it
 
 # JWT Configuration (if using Spring Security)
 jwt:
