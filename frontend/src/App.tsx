@@ -113,7 +113,7 @@ function App() {
             }
           />
           <Route
-            path="/feedback/song/:songId"
+            path="/feedback/playlist/:playlistId"
             element={
               <ProtectedRoute>
                 <FeedbackForm />

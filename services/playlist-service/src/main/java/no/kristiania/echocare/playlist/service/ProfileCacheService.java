@@ -52,7 +52,7 @@ public class ProfileCacheService {
             event.getPatientName(),
             event.getEra(),
             event.getFavoriteArtists() != null ? event.getFavoriteArtists() : List.of(),
-            event.getSymptoms() != null ? String.join(", ", event.getSymptoms()) : "",
+            event.getSymptoms() != null ? event.getSymptoms() : List.of(),
             event.getDementiaStage()
         );
 

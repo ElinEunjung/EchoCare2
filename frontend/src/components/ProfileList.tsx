@@ -69,12 +69,12 @@ export default function ProfileList() {
               onClick={() => navigate(`/profiles/${profile.id}`)}
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-gray-800">{profile.name}</h3>
+                <h3 className="text-xl font-bold text-gray-800">{profile.patientName}</h3>
                 <span className="text-2xl">👤</span>
               </div>
               <div className="space-y-2 text-sm text-gray-600">
                 <p>
-                  <strong>Musical Era:</strong> {profile.musicalEra}
+                  <strong>Musical Era:</strong> {profile.era}
                 </p>
                 <p>
                   <strong>Favorite Artists:</strong>{' '}
@@ -82,7 +82,7 @@ export default function ProfileList() {
                   {profile.favoriteArtists.length > 2 && '...'}
                 </p>
                 <p>
-                  <strong>Symptoms:</strong> {profile.symptoms.length} tracked
+                  <strong>Dementia Stage:</strong> {profile.dementiaStage.charAt(0).toUpperCase() + profile.dementiaStage.slice(1)} 
                 </p>
               </div>
               <button

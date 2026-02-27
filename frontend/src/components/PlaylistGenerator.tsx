@@ -8,12 +8,8 @@ export default function PlaylistGenerator() {
   const navigate = useNavigate();
   const [profiles, setProfiles] = useState<PatientProfile[]>([]);
   const [generatedPlaylist, setGeneratedPlaylist] = useState<PlaylistResponse | null>(null);
-  const [formData, setFormData] = useState<GeneratePlaylistRequest>({
-    profileId: '',
-    situation: '',
-    timeOfDay: '',
-    moodPreference: '',
-  });
+  const [selectedProfileId, setSelectedProfileId] = useState('');
+  const [careNeed, setCareNeed] = useState<GeneratePlaylistRequest['careNeed'] | ''>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -37,7 +33,28 @@ export default function PlaylistGenerator() {
     setGeneratedPlaylist(null);
 
     try {
-      const response = await playlistService.generatePlaylist(formData);
+      const selectedProfile = profiles.find(p => p.id === selectedProfileId);
+      if (!selectedProfile) {
+        setError('Please select a patient profile');
+        setLoading(false);
+        return;
+      }
+
+      if (!careNeed) {
+        setError('Please select a care need');
+        setLoading(false);
+        return;
+      }
+
+      const request: GeneratePlaylistRequest = {
+        patientId: selectedProfile.id,
+        careNeed: careNeed as GeneratePlaylistRequest['careNeed'],
+        era: selectedProfile.era,
+        dementiaStage: selectedProfile.dementiaStage,
+        favoriteArtists: selectedProfile.favoriteArtists
+      };
+
+      const response = await playlistService.generatePlaylist(request);
       setGeneratedPlaylist(response);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to generate playlist');
@@ -78,70 +95,55 @@ export default function PlaylistGenerator() {
               </label>
               <select
                 required
-                value={formData.profileId}
-                onChange={(e) => setFormData({ ...formData, profileId: e.target.value })}
+                value={selectedProfileId}
+                onChange={(e) => setSelectedProfileId(e.target.value)}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 <option value="">Select patient</option>
                 {profiles.map((profile) => (
                   <option key={profile.id} value={profile.id}>
-                    {profile.name} - {profile.musicalEra}
+                    {profile.patientName} - {profile.era} ({profile.dementiaStage})
                   </option>
                 ))}
               </select>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Situation
-              </label>
-              <input
-                type="text"
-                value={formData.situation}
-                onChange={(e) => setFormData({ ...formData, situation: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="e.g., Morning routine, Lunch time"
-              />
-            </div>
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <p className="text-sm text-gray-600">
+                  <strong>Era:</strong> {profiles.find(p => p.id === selectedProfileId)?.era}
+                </p>
+                <p className="text-sm text-gray-600">
+                  <strong>Stage:</strong> {profiles.find(p => p.id === selectedProfileId)?.dementiaStage}
+                </p>
+                <p className="text-sm text-gray-600">
+                  <strong>Favorite Artists:</strong>{' '}
+                  {profiles.find(p => p.id === selectedProfileId)?.favoriteArtists.join(', ') || 'None'}
+                </p>
+              </div>
+
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Time of Day
+                Care Need *
               </label>
               <select
-                value={formData.timeOfDay}
-                onChange={(e) => setFormData({ ...formData, timeOfDay: e.target.value })}
+                required
+                value={careNeed}
+                onChange={(e) => setCareNeed(e.target.value as GeneratePlaylistRequest['careNeed'] | '')}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
-                <option value="">Select time</option>
-                <option value="MORNING">Morning</option>
-                <option value="AFTERNOON">Afternoon</option>
-                <option value="EVENING">Evening</option>
-                <option value="NIGHT">Night</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Mood Preference
-              </label>
-              <select
-                value={formData.moodPreference}
-                onChange={(e) => setFormData({ ...formData, moodPreference: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="">Select mood</option>
-                <option value="ENERGETIC">Energetic</option>
-                <option value="CALM">Calm</option>
-                <option value="HAPPY">Happy</option>
-                <option value="NOSTALGIC">Nostalgic</option>
-                <option value="RELAXING">Relaxing</option>
+                <option value="">Select care need</option>
+                <option value="stress_relief">Stress Relief</option>
+                <option value="activity_support">Activity Support</option>
+                <option value="calming_agitation">Calming Agitation</option>
+                <option value="easing_depression">Easing Depression</option>
+                <option value="reducing_anxiety">Reducing Anxiety</option>
               </select>
             </div>
 
             <button
               type="submit"
-              disabled={loading || !formData.profileId}
+              disabled={loading || !selectedProfileId || !careNeed}
               className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition-colors disabled:bg-gray-400"
             >
               {loading ? 'Generating...' : '🎵 Generate Playlist'}
@@ -162,18 +164,7 @@ export default function PlaylistGenerator() {
             </div>
           ) : (
             <div>
-              <div className="mb-4 p-4 bg-blue-50 rounded-lg">
-                <p className="text-sm text-gray-600">
-                  <strong>Generated:</strong>{' '}
-                  {new Date(generatedPlaylist.generatedAt).toLocaleString()}
-                </p>
-                {generatedPlaylist.recommendationReason && (
-                  <p className="text-sm text-gray-600 mt-2">
-                    <strong>Reason:</strong> {generatedPlaylist.recommendationReason}
-                  </p>
-                )}
-              </div>
-
+            
               <div className="space-y-3 max-h-96 overflow-y-auto">
                 {generatedPlaylist.songs.map((song, index) => (
                   <div
@@ -190,14 +181,17 @@ export default function PlaylistGenerator() {
                         <p className="text-xs text-gray-500">{song.year}</p>
                       )}
                     </div>
-                    <button
-                      onClick={() => navigate(`/feedback/song/${song.id}`)}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                    >
-                      Rate
-                    </button>
                   </div>
                 ))}
+              </div>
+
+              <div className="mt-6">
+                <button
+                  onClick={() => navigate(`/feedback/playlist/${generatedPlaylist.playlistId}`)}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-lg font-semibold transition-colors"
+                >
+                  💬 Submit Feedback for this Playlist
+                </button>
               </div>
             </div>
           )}

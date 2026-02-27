@@ -8,6 +8,6 @@ public record PatientProfileResponse(
         String patientName,
         String era,  // Combined format: "1965-1975"
         List<String> favoriteArtists,
-        String symptoms,  // Comma-separated symptoms
+        List<String> symptoms, 
         String dementiaStage
 ){}

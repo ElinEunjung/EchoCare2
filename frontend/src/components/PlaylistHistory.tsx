@@ -47,6 +47,11 @@ export default function PlaylistHistory() {
     }
   };
 
+  const getProfileName = (patientId: string) => {
+    const profile = profiles.find(p => p.id === patientId);
+    return profile?.patientName || 'Unknown Patient';
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
@@ -71,7 +76,7 @@ export default function PlaylistHistory() {
           <option value="">Select patient</option>
           {profiles.map((profile) => (
             <option key={profile.id} value={profile.id}>
-              {profile.name}
+              {profile.patientName}
             </option>
           ))}
         </select>
@@ -100,15 +105,23 @@ export default function PlaylistHistory() {
       ) : (
         <div className="space-y-6">
           {playlists.map((playlist) => (
-            <div key={playlist.id} className="bg-white rounded-lg shadow-lg p-6">
+            <div key={playlist.playlistId} className="bg-white rounded-lg shadow-lg p-6">
               <div className="flex justify-between items-start mb-4">
                 <div>
                   <h3 className="text-xl font-bold text-gray-800">
-                    {playlist.profileName}
+                    {getProfileName(playlist.patientId)}
                   </h3>
-                  <p className="text-sm text-gray-600">
-                    Generated: {new Date(playlist.generatedAt).toLocaleString()}
-                  </p>
+                  <div className="flex gap-4 mt-2">
+                    <span className="text-sm text-gray-600">
+                      Care Need: <span className="font-semibold">{playlist.careNeed.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())}</span>
+                    </span>
+                    <span className="text-sm text-gray-600">
+                      Era: <span className="font-semibold">{playlist.era}</span>
+                    </span>
+                    <span className="text-sm text-gray-600">
+                      Stage: <span className="font-semibold capitalize">{playlist.dementiaStage}</span>
+                    </span>
+                  </div>
                 </div>
                 <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">
                   {playlist.songs.length} songs

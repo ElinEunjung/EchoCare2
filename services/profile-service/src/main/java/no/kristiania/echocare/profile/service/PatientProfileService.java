@@ -73,16 +73,12 @@ public class PatientProfileService {
                 ? profile.getFavoriteArtists()
                 : List.of();
 
-        String symptoms = profile.getSymptoms() != null
-                ? String.join(", ", profile.getSymptoms())
-                : "";
-
         return new PatientProfileResponse(
                 profile.getId(),
                 profile.getPatientName(),
                 profile.getEra(),
                 favoriteArtists,
-                symptoms,
+                profile.getSymptoms(),
                 profile.getDementiaStage()
         );
     }

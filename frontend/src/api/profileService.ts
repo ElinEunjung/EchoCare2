@@ -14,7 +14,11 @@ export const profileService = {
   },
 
   createProfile: async (data: CreatePatientProfileRequest): Promise<PatientProfile> => {
+
+    console.log(data)
     const response = await apiClient.post('/api/profiles', data);
+
+
     return response.data;
   },
 

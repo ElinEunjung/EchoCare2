@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { feedbackService } from '../api/feedbackService';
+import { playlistService } from '../api/playlistService';
 import { profileService } from '../api/profileService';
-import type { FeedbackResponse, PatientProfile } from '../types';
+import type { FeedbackResponse, PatientProfile, Playlist } from '../types';
 
 export default function FeedbackList() {
   const navigate = useNavigate();
   const [profiles, setProfiles] = useState<PatientProfile[]>([]);
   const [selectedProfileId, setSelectedProfileId] = useState('');
   const [feedbacks, setFeedbacks] = useState<FeedbackResponse[]>([]);
+  const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -19,6 +21,7 @@ export default function FeedbackList() {
   useEffect(() => {
     if (selectedProfileId) {
       loadFeedbacks(selectedProfileId);
+      loadPlaylists(selectedProfileId);
     }
   }, [selectedProfileId]);
 
@@ -47,15 +50,21 @@ export default function FeedbackList() {
     }
   };
 
-  const getRatingColor = (rating: number) => {
-    if (rating >= 4) return 'text-green-600';
-    if (rating >= 3) return 'text-yellow-600';
-    return 'text-red-600';
+  const loadPlaylists = async (profileId: string) => {
+    try {
+      const data = await playlistService.getPlaylistsByProfile(profileId);
+      setPlaylists(data);
+    } catch (err) {
+      console.error('Failed to load playlists:', err);
+    }
   };
 
-  const getRatingStars = (rating: number) => {
-    return '⭐'.repeat(rating);
+  const getPlaylistDetails = (playlistId: string) => {
+    return playlists.find((p) => p.playlistId === playlistId);
   };
+
+  const likedCount = feedbacks.filter((f) => f.liked).length;
+  const dislikedCount = feedbacks.filter((f) => !f.liked).length;
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -81,7 +90,7 @@ export default function FeedbackList() {
           <option value="">Select patient</option>
           {profiles.map((profile) => (
             <option key={profile.id} value={profile.id}>
-              {profile.name}
+              {profile.patientName}
             </option>
           ))}
         </select>
@@ -117,45 +126,64 @@ export default function FeedbackList() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-green-600">
-                  {(
-                    feedbacks.reduce((sum, f) => sum + f.rating, 0) / feedbacks.length
-                  ).toFixed(1)}
+                  👍 {likedCount}
                 </p>
-                <p className="text-sm text-gray-600">Average Rating</p>
+                <p className="text-sm text-gray-600">Liked</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-purple-600">
-                  {feedbacks.filter((f) => f.rating >= 4).length}
+                <p className="text-2xl font-bold text-red-600">
+                  👎 {dislikedCount}
                 </p>
-                <p className="text-sm text-gray-600">High Ratings (4-5)</p>
+                <p className="text-sm text-gray-600">Disliked</p>
               </div>
             </div>
           </div>
 
-          {feedbacks.map((feedback) => (
-            <div key={feedback.id} className="bg-white rounded-lg shadow-lg p-6">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <p className="text-sm text-gray-500">
-                    Song ID: {feedback.songId}
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    {new Date(feedback.timestamp).toLocaleString()}
-                  </p>
-                </div>
-                <div className={`text-2xl font-bold ${getRatingColor(feedback.rating)}`}>
-                  {getRatingStars(feedback.rating)} {feedback.rating}/5
-                </div>
-              </div>
+          {feedbacks.map((feedback) => {
+            const playlist = getPlaylistDetails(feedback.playlistId);
 
-              {feedback.comment && (
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <p className="text-sm font-medium text-gray-700 mb-1">Comment:</p>
-                  <p className="text-gray-600">{feedback.comment}</p>
+
+            return (
+              <div key={feedback.id} className="bg-white rounded-lg shadow-lg p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex-1">
+                    <p className="text-sm text-gray-500 mb-1">
+                      Playlist ID: {feedback.playlistId}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      {new Date(feedback.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+                  <div className={`text-4xl ${feedback.liked ? 'text-green-500' : 'text-red-500'}`}>
+                    {feedback.liked ? '👍' : '👎'}
+                  </div>
                 </div>
-              )}
-            </div>
-          ))}
+
+                {playlist && (
+                  <div className="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-gray-200">
+                    <div className="bg-blue-50 p-3 rounded">
+                      <p className="text-xs text-gray-500 mb-1">Care Need</p>
+                      <p className="text-sm font-semibold text-gray-800">
+                        {playlist.careNeed.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())}
+                      </p>
+                    </div>
+                    <div className="bg-purple-50 p-3 rounded">
+                      <p className="text-xs text-gray-500 mb-1">Era</p>
+                      <p className="text-sm font-semibold text-gray-800">
+                        {playlist.era}
+                      </p>
+                    </div>
+                    <div className="bg-green-50 p-3 rounded">
+                      <p className="text-xs text-gray-500 mb-1">Dementia Stage</p>
+                      <p className="text-sm font-semibold text-gray-800 capitalize">
+                        {playlist.dementiaStage}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

@@ -1,21 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { profileService } from '../api/profileService';
-import type { CreatePatientProfileRequest, Caregiver } from '../types';
+import type { CreatePatientProfileRequest } from '../types';
 
 export default function ProfileForm() {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditMode = Boolean(id);
 
-  const [caregivers, setCaregivers] = useState<Caregiver[]>([]);
+  // const [caregivers, setCaregivers] = useState<Caregiver[]>([]);
   const [formData, setFormData] = useState<CreatePatientProfileRequest>({
-    name: '',
-    dateOfBirth: '',
-    musicalEra: '',
+    patientName: '',
+    dementiaStage: 'mild',
+    era: '',
     favoriteArtists: [],
     symptoms: [],
-    caregiverId: '',
   });
   const [artistInput, setArtistInput] = useState('');
   const [symptomInput, setSymptomInput] = useState('');
@@ -23,31 +22,30 @@ export default function ProfileForm() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    loadCaregivers();
+    // loadCaregivers();
     if (isEditMode && id) {
       loadProfile(id);
     }
   }, [id, isEditMode]);
 
-  const loadCaregivers = async () => {
-    try {
-      const data = await profileService.getAllCaregivers();
-      setCaregivers(data);
-    } catch (err) {
-      console.error('Failed to load caregivers:', err);
-    }
-  };
+  // const loadCaregivers = async () => {
+  //   try {
+  //     const data = await profileService.getCaregivers();
+  //     setCaregivers(data);
+  //   } catch (err) {
+  //     console.error('Failed to load caregivers:', err);
+  //   }
+  // };
 
   const loadProfile = async (profileId: string) => {
     try {
       const profile = await profileService.getProfileById(profileId);
       setFormData({
-        name: profile.name,
-        dateOfBirth: profile.dateOfBirth,
-        musicalEra: profile.musicalEra,
+        patientName: profile.patientName,
+        dementiaStage: profile.dementiaStage,
+        era: profile.era,
         favoriteArtists: profile.favoriteArtists,
         symptoms: profile.symptoms,
-        caregiverId: profile.caregiverId,
       });
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to load profile');
@@ -92,6 +90,8 @@ export default function ProfileForm() {
 
   const addSymptom = () => {
     if (symptomInput.trim() && !formData.symptoms.includes(symptomInput.trim())) {
+
+
       setFormData({
         ...formData,
         symptoms: [...formData.symptoms, symptomInput.trim()],
@@ -128,25 +128,40 @@ export default function ProfileForm() {
             <input
               type="text"
               required
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              value={formData.patientName}
+              onChange={(e) => setFormData({ ...formData, patientName: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="Enter patient name"
             />
           </div>
 
-          <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+              Dementia Stage *
+            </label>
+            <select
+              required
+              value={formData.dementiaStage}
+              onChange={(e) => setFormData({ ...formData, dementiaStage: e.target.value as 'mild' | 'moderate' | 'severe' })}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">Select Dementia</option>
+              <option value="mild">Mild</option>
+              <option value="moderate">Moderate</option>
+              <option value="severe">Severe</option>
+            </select>
+
+          {/* <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Date of Birth *
+              Dementia Stage *
             </label>
             <input
-              type="date"
+              type="text"
               required
-              value={formData.dateOfBirth}
-              onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+              value={formData.dementiaStage}
+              onChange={(e) => setFormData({ ...formData, dementiaStage: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
-          </div>
+          </div> */}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -154,8 +169,8 @@ export default function ProfileForm() {
             </label>
             <select
               required
-              value={formData.musicalEra}
-              onChange={(e) => setFormData({ ...formData, musicalEra: e.target.value })}
+              value={formData.era}
+              onChange={(e) => setFormData({ ...formData, era: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="">Select era</option>
@@ -247,25 +262,6 @@ export default function ProfileForm() {
                 </span>
               ))}
             </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Caregiver *
-            </label>
-            <select
-              required
-              value={formData.caregiverId}
-              onChange={(e) => setFormData({ ...formData, caregiverId: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="">Select caregiver</option>
-              {caregivers.map((caregiver) => (
-                <option key={caregiver.id} value={caregiver.id}>
-                  {caregiver.fullName} ({caregiver.email})
-                </option>
-              ))}
-            </select>
           </div>
 
           <div className="flex gap-4 pt-4">

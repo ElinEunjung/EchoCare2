@@ -11,6 +11,6 @@ public record ProfileDTO (
         String patientName,
         String era,
         List<String> favoriteArtists,
-        String symptoms, // Comma-separated symptoms
+        List<String> symptoms,
         String dementiaStage
 ) {}

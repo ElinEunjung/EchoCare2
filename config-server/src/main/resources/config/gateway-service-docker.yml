@@ -5,6 +5,14 @@ spring:
 
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: '*'
+            allowedMethods: '*'
+            allowedHeaders: '*'
+            allowCredentials: true
+            maxAge: 3600
       routes:
         # Auth endpoints (public - no JWT needed for registration and login)
         - id: auth-route

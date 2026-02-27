@@ -1,21 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { feedbackService } from '../api/feedbackService';
-import { playlistService } from '../api/playlistService';
 import { profileService } from '../api/profileService';
-import type { SubmitFeedbackRequest, Song, PatientProfile } from '../types';
+import type { SubmitFeedbackRequest, PatientProfile } from '../types';
 
 export default function FeedbackForm() {
   const navigate = useNavigate();
-  const { songId } = useParams();
+  const { playlistId } = useParams();
   
   const [profiles, setProfiles] = useState<PatientProfile[]>([]);
-  const [song, setSong] = useState<Song | null>(null);
   const [formData, setFormData] = useState<SubmitFeedbackRequest>({
-    profileId: '',
-    songId: songId || '',
-    rating: 3,
-    comment: '',
+    patientProfileId: '',
+    playlistId: playlistId || '',
+    liked: true,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -23,11 +20,10 @@ export default function FeedbackForm() {
 
   useEffect(() => {
     loadProfiles();
-    if (songId) {
-      loadSong(songId);
-      setFormData((prev) => ({ ...prev, songId }));
+    if (playlistId) {
+      setFormData((prev) => ({ ...prev, playlistId }));
     }
-  }, [songId]);
+  }, [playlistId]);
 
   const loadProfiles = async () => {
     try {
@@ -35,15 +31,6 @@ export default function FeedbackForm() {
       setProfiles(data);
     } catch (err) {
       console.error('Failed to load profiles:', err);
-    }
-  };
-
-  const loadSong = async (id: string) => {
-    try {
-      const data = await playlistService.getSongById(id);
-      setSong(data);
-    } catch (err) {
-      console.error('Failed to load song:', err);
     }
   };
 
@@ -70,7 +57,7 @@ export default function FeedbackForm() {
     <div className="max-w-3xl mx-auto px-4 py-8">
       <div className="bg-white rounded-lg shadow-lg p-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-8">
-          ⭐ Submit Feedback
+          💬 Submit Playlist Feedback
         </h1>
 
         {success && (
@@ -85,14 +72,6 @@ export default function FeedbackForm() {
           </div>
         )}
 
-        {song && (
-          <div className="bg-blue-50 p-4 rounded-lg mb-6">
-            <h3 className="font-bold text-gray-800">{song.title}</h3>
-            <p className="text-gray-600">{song.artist}</p>
-            {song.year && <p className="text-sm text-gray-500">{song.year}</p>}
-          </div>
-        )}
-
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -100,68 +79,63 @@ export default function FeedbackForm() {
             </label>
             <select
               required
-              value={formData.profileId}
-              onChange={(e) => setFormData({ ...formData, profileId: e.target.value })}
+              value={formData.patientProfileId}
+              onChange={(e) => setFormData({ ...formData, patientProfileId: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="">Select patient</option>
               {profiles.map((profile) => (
                 <option key={profile.id} value={profile.id}>
-                  {profile.name}
+                  {profile.patientName}
                 </option>
               ))}
             </select>
           </div>
 
-          {!songId && (
+          {!playlistId && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Song ID *
+                Playlist ID *
               </label>
               <input
                 type="text"
                 required
-                value={formData.songId}
-                onChange={(e) => setFormData({ ...formData, songId: e.target.value })}
+                value={formData.playlistId}
+                onChange={(e) => setFormData({ ...formData, playlistId: e.target.value })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter song ID"
+                placeholder="Enter playlist ID"
               />
             </div>
           )}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-4">
-              Rating: {formData.rating} / 5 ⭐
+              Did the patient enjoy this playlist?
             </label>
-            <div className="flex gap-2">
-              {[1, 2, 3, 4, 5].map((rating) => (
-                <button
-                  key={rating}
-                  type="button"
-                  onClick={() => setFormData({ ...formData, rating })}
-                  className={`flex-1 py-4 rounded-lg font-bold text-2xl transition-all ${
-                    formData.rating >= rating
-                      ? 'bg-yellow-400 text-white shadow-lg scale-105'
-                      : 'bg-gray-200 text-gray-400 hover:bg-gray-300'
-                  }`}
-                >
-                  {rating}
-                </button>
-              ))}
+            <div className="flex gap-4">
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, liked: true })}
+                className={`flex-1 py-6 rounded-lg font-bold text-xl transition-all ${
+                  formData.liked
+                    ? 'bg-green-500 text-white shadow-lg scale-105'
+                    : 'bg-gray-200 text-gray-400 hover:bg-gray-300'
+                }`}
+              >
+                👍 Liked
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, liked: false })}
+                className={`flex-1 py-6 rounded-lg font-bold text-xl transition-all ${
+                  !formData.liked
+                    ? 'bg-red-500 text-white shadow-lg scale-105'
+                    : 'bg-gray-200 text-gray-400 hover:bg-gray-300'
+                }`}
+              >
+                👎 Disliked
+              </button>
             </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Comments (Optional)
-            </label>
-            <textarea
-              value={formData.comment}
-              onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
-              rows={4}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="How did the patient respond to this song?"
-            />
           </div>
 
           <div className="flex gap-4 pt-4">

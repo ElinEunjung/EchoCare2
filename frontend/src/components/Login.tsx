@@ -6,7 +6,7 @@ import type { LoginRequest } from '../types';
 export default function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<LoginRequest>({
-    email: '',
+    username: '',
     password: '',
   });
   const [error, setError] = useState('');
@@ -43,15 +43,15 @@ export default function Login() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email
+              Username
             </label>
             <input
-              type="email"
+              type="text"
               required
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              value={formData.username}
+              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="your@email.com"
+              placeholder="your username"
             />
           </div>
 

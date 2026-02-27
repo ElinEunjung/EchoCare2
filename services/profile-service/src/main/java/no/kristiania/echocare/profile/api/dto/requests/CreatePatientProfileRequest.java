@@ -12,5 +12,6 @@ public record CreatePatientProfileRequest(
         @NotNull String dementiaStage,
         @NotEmpty List<String> favoriteArtists,
         @NotEmpty List<String> symptoms
+
 ) {
 }

@@ -7,7 +7,7 @@ export interface RegisterRequest {
 }
 
 export interface LoginRequest {
-  email: string;
+  username: string;
   password: string;
 }
 
@@ -21,23 +21,18 @@ export interface AuthResponse {
 // Profile Types
 export interface PatientProfile {
   id: string;
-  name: string;
-  dateOfBirth: string;
-  musicalEra: string;
+  patientName: string;
+  era: string;
   favoriteArtists: string[];
   symptoms: string[];
-  caregiverId: string;
-  createdAt: string;
-  updatedAt: string;
+  dementiaStage: 'mild' | 'moderate' | 'severe';
 }
-
 export interface CreatePatientProfileRequest {
-  name: string;
-  dateOfBirth: string;
-  musicalEra: string;
+  patientName: string;
+  era: string;
+  dementiaStage: 'mild' | 'moderate' | 'severe';
   favoriteArtists: string[];
   symptoms: string[];
-  caregiverId: string;
 }
 
 // Caregiver Types
@@ -51,11 +46,13 @@ export interface Caregiver {
 
 // Playlist Types
 export interface Playlist {
-  id: string;
-  profileId: string;
-  profileName: string;
-  generatedAt: string;
+  patientId: string;
+  playlistId: string;
+  careNeed: string;
+  era: string;
+  dementiaStage: string;
   songs: Song[];
+  message?: string;
 }
 
 export interface Song {
@@ -68,10 +65,11 @@ export interface Song {
 }
 
 export interface GeneratePlaylistRequest {
-  profileId: string;
-  situation?: string;
-  timeOfDay?: string;
-  moodPreference?: string;
+  patientId: string;
+  careNeed: "stress_relief" | "activity_support" | "calming_agitation" | "easing_depression" | "reducing_anxiety";
+  era: string;
+  dementiaStage: 'mild' | 'moderate' | 'severe';
+  favoriteArtists: string[];
 }
 
 export interface PlaylistResponse {
@@ -85,27 +83,24 @@ export interface PlaylistResponse {
 // Feedback Types
 export interface Feedback {
   id: string;
-  profileId: string;
-  songId: string;
-  rating: number;
-  comment?: string;
+  patientProfileId: string;
+  playlistId: string;
+  liked: boolean;
   timestamp: string;
   profileName?: string;
-  songTitle?: string;
 }
 
 export interface SubmitFeedbackRequest {
-  profileId: string;
-  songId: string;
-  rating: number;
-  comment?: string;
+  patientProfileId: string;
+  playlistId: string;
+  liked: boolean;
 }
 
 export interface FeedbackResponse {
   id: string;
-  profileId: string;
-  songId: string;
-  rating: number;
-  comment?: string;
-  timestamp: string;
+  patientProfileId: string;
+  playlistId: string;
+  liked: boolean;
+  createdAt: Date;
+  
 }
