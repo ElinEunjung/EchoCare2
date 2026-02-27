@@ -16,8 +16,8 @@ spring:
         health-check-interval: 10s
         health-check-timeout: 5s
         instance-id: ${spring.application.name}-${INSTANCE_ID:default}
-        prefer-ip-address: false
-        hostname: ${spring.application.name}
+        prefer-ip-address: true
+        # hostname removed - let each instance register with its unique container hostname or IP
       config:
         enabled: false # disable Consul config (I use Config Server)
     loadbalancer:
