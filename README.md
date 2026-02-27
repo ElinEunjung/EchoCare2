@@ -323,11 +323,8 @@ EchoCare2/
 │   ├── public/                 # Static assets
 │   └── package.json            # Frontend dependencies
 ├── docs/                       # Comprehensive documentation
-│   ├── ARCHITECTURE.md         # Complete system architecture (1,500+ lines)
-│   ├── REQUIREMENTS_ASSESSMENT.md  # Evidence for all 12 requirements
-│   └── EXAM_READY_SUMMARY.md   # Quick reference for exam
 ├── docker-compose.yml          # Orchestration for all services
-├── test-load-balancing-detailed.ps1  # Automated load balancing test
+├── test-load-balancing.ps1     # Automated load balancing test
 └── README.md                   # This file
 ```
 
@@ -367,8 +364,6 @@ profile-service/
 
 ## Microservices Requirements Fulfillment
 
-**For complete details, see [Architecture Documentation](docs/ARCHITECTURE.md) 
-
 ### Required for Grade E
 - [x] **1. Multiple services with different functionality**
   - Profile Service, Playlist Service, Feedback Service + infrastructure
@@ -385,7 +380,6 @@ profile-service/
   - Layered architecture (Controller → Service → Repository)
   - Consistent across all services
 - [x] **5. Architecture consistent with documentation**
-  - See `docs/ARCHITECTURE.md` (1,500+ lines)
   - All services, endpoints, databases, communication patterns documented
 - [x] **6. Docker container deployment**
   - `docker-compose.yml` - 10 containers
@@ -462,41 +456,6 @@ http://localhost:8500/ui/dc1/services
 - **React Router 6** - Client-side routing
 - **Tailwind CSS** - Utility-first CSS framework
 
-
----
-
-## Documentation
-
-- **[Complete Architecture Documentation](docs/ARCHITECTURE.md)** - Detailed system design, services, communication patterns, deployment (1,500+ lines)
-
----
-
-## Future Work
-
-### Technical Enhancements
-- **Machine Learning Integration:** Use feedback data to train recommendation algorithm
-- **Spotify API Integration:** Access real song catalog with comprehensive audio features
-- **Kubernetes Deployment:** Production-grade orchestration with auto-scaling
-- **API Rate Limiting:** Protect services from overload
-- **Metrics & Monitoring:** Prometheus + Grafana for system observability
-
-### Feature Enhancements
-- **Multi-user Dashboard:** Multiple caregivers collaborating on patient care
-- **Clinician Portal:** Healthcare providers track progress across patients
-- **Advanced Recommendation:** Consider mood, weather, time of day, recent symptoms
-- **Session History:** Track all music therapy sessions with detailed notes
-- **Progress Tracking:** Visualize patient improvement over time
-- **Multi-language Support:** Internationalization for different regions
-- **Mobile Apps:** iOS/Android apps for caregivers on the go
-
-### Domain Enhancements
-- **Song-level Feedback:** Detailed feedback on individual songs
-- **Custom Playlists:** Allow caregivers to manually create/edit playlists
-- **Playlist Templates:** Pre-built playlists for common scenarios
-- **Music Library Expansion:** More songs from diverse eras and cultures
-- **Genre Preferences:** Rock, jazz, classical, country, etc.
-- **Activity-Specific Playlists:** Mealtime, bathing, bedtime, exercise
-
 ---
 ## References
 
@@ -519,7 +478,7 @@ Medical research supporting music therapy for dementia:
 ## AI Assistance
 
 **GitHub Copilot (Claude Sonnet 4.5)** was used for:
-- Documentation (README.md, architecture documentation)
+- Documentation (README.md, code comments)
 - Boilerplate code generation (controllers, DTOs, configuration files)
 - Code snippets and examples
 - Commit message formatting
