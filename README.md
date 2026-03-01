@@ -29,7 +29,7 @@ EchoCare is a fullstack microservices application that helps caregivers provide 
 
 ---
 
-## Method 1: Docker Compose 
+## Method : Docker Compose 
 
 This method starts all backend services with a single command. **This is how examiners should run the project.**
 
