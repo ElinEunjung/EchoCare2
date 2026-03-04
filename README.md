@@ -10,7 +10,7 @@ EchoCare is a fullstack microservices application that helps caregivers provide 
 
 **Key Innovation:** The application uses the "reminiscence bump" principle - people with dementia respond best to music from their late teens and early twenties. EchoCare generates playlists biased toward each patient's musical era (e.g., 1960s-1970s) and adapts song selection based on current care needs (reduce anxiety, stress relief, etc.) and dementia stage (mild, moderate, severe).
 
-**Implementation:** This MVP implements a production-grade microservices architecture with:
+**Implementation:** This MVP implements microservices architecture with:
 - 3 core business services (Profile, Playlist, Feedback)
 - Both synchronous (REST) and asynchronous (RabbitMQ) communication
 - Service discovery and load balancing (Consul)
@@ -39,7 +39,7 @@ cd EchoCare2
 docker-compose up -d --build
 ```
 
- **Wait ~2 minutes** for all services to be healthy. Verify:
+ **Wait ~3 minutes** for all services to be healthy. Verify:
 ```bash
 docker-compose ps
 ```
@@ -51,7 +51,6 @@ docker-compose ps
 - 1 each: config-server, consul, rabbitmq
 
 **Services will be available at:**
-- **Gateway API:** http://localhost:8080
 - **Consul UI:** http://localhost:8500/ui
 - **RabbitMQ Management:** http://localhost:15672 (guest/guest)
 
@@ -144,7 +143,7 @@ These user stories allow examiners to assess the implemented functionality:
 
 ---
 
-### Story 3: Generate Situation-Aware Playlist (Demonstrates Sync Communication)
+### Story 3: Generate Situation-Aware Playlist (Demonstrates sync Communication)
 **Scenario:** Generate playlist for patient based on care need and dementia stage
 
 **Steps to Test:**
