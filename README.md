@@ -476,15 +476,7 @@ Medical research supporting music therapy for dementia:
 
 ## AI Assistance
 
-**GitHub Copilot (Claude Sonnet 4.5)** was used for:
-- Documentation (README.md, code comments)
-- Boilerplate code generation (controllers, DTOs, configuration files)
-- Code snippets and examples
-- Commit message formatting
-- Database migration scripts
-- Test scripts
-- Configuration files (docker-compose.yml, application.yml)
+AI tools were used for documentation, boilerplate generation, and commit formatting. All architectural decisions, system design, and business logic were authored by the project developer.
 
-**All architectural decisions, system design, implementation logic, and domain modeling were designed by the project author.**
 
 ---
