@@ -474,10 +474,16 @@ Medical research supporting music therapy for dementia:
 
 ---
 
-## Known limitations & AI Assistance
+## Known limitations
 
-- The JWT secret has a committed dev-only default so the system starts with one command for evaluation. In production it would be injected at runtime from a secrets manager and never committed to the repository.
-  
-- The backend services were built by me as an individual exam project. The React frontend was outside the exam scope and was generated with AI tools to make the system demonstrable.
+- **Message loss on failure:** event consumers log and drop messages if processing fails.
+- **Services can get out of sync:** database writes and event publishing are not atomic.
+- **Duplicate messages:** consumers are not idempotent, so a redelivered message could be processed twice.
+- **Limited tests:** current tests only verify that each service starts.
+- **Dev-only credentials:** the JWT secret, database passwords and RabbitMQ login are committed local defaults, so the system starts with one command for evaluation. In production they would be injected at runtime from a secrets manager or Kubernetes Secrets and never committed.
 
-- AI tools were used for documentation, boilerplate generation, and commit formatting. All architectural decisions, system design, and business logic were authored by the project developer.
+Making event handling reliable is what I want to learn next, in a production setting.
+
+## AI assistance
+
+I designed and built the backend services myself as an individual exam project, with AI assistance. All architectural decisions, system design and business logic are my own. AI tools were also used for documentation, boilerplate code and commit messages. The React frontend was outside the exam scope and was generated with AI tools to make the system demonstrable.
