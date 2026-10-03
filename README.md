@@ -474,9 +474,8 @@ Medical research supporting music therapy for dementia:
 
 ---
 
-## AI Assistance
+## Known limitations & AI Assistance
+
+The backend services were built by me as an individual exam project. The React frontend was outside the exam scope and was generated with AI tools to make the system demonstrable.
 
 AI tools were used for documentation, boilerplate generation, and commit formatting. All architectural decisions, system design, and business logic were authored by the project developer.
-
-
----
