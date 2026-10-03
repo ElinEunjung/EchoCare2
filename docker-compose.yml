@@ -338,6 +338,7 @@ services:
       SPRING_CLOUD_CONFIG_URI: http://echocare-config-server:8888
       SPRING_CLOUD_CONSUL_HOST: consul
       SPRING_CLOUD_CONSUL_PORT: 8500
+      # Dev-only default for local demo. Override via environment in any real deployment.
       JWT_SECRET: WOwTER+0vZAxLEr3LtLzJY1Y77gWWnnuQeUrvvTA9ZKvH47wGBwv1kJ+ghqrn7basSlRTQjjXNsaMJdZNbQRIw==
     depends_on:
       consul:
