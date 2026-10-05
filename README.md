@@ -19,6 +19,21 @@ EchoCare is a fullstack microservices application that helps caregivers provide 
 - React-based frontend for caregivers
 
 ---
+## Known limitations
+
+- **Message loss on failure:** event consumers log and drop messages if processing fails.
+- **Services can get out of sync:** database writes and event publishing are not atomic.
+- **Duplicate messages:** consumers are not idempotent, so a redelivered message could be processed twice.
+- **Limited tests:** current tests only verify that each service starts.
+- **Dev-only credentials:** the JWT secret, database passwords and RabbitMQ login are committed local defaults, so the system starts with one command for evaluation. In production they would be injected at runtime from a secrets manager or Kubernetes Secrets and never committed.
+
+Making event handling reliable is what I want to learn next, in a production setting.
+
+---
+
+## AI assistance
+
+I designed and built the backend services myself as an individual exam project, with AI assistance. All architectural decisions, system design and business logic are my own. AI tools were also used for documentation, boilerplate code and commit messages. The React frontend was outside the exam scope and was generated with AI tools to make the system demonstrable.
 
 ## Getting Started
 
@@ -472,18 +487,4 @@ Medical research supporting music therapy for dementia:
 
 - [Garrido, S., Dunne, L., Chang, E., Perz, J., Stevens, C. J., Haertsch, M. "Music playlists for people with dementia: A qualitative analysis of caregiver perspectives." *BMC Geriatrics*, 2021](https://pmc.ncbi.nlm.nih.gov/articles/PMC10455001/)
 
----
 
-## Known limitations
-
-- **Message loss on failure:** event consumers log and drop messages if processing fails.
-- **Services can get out of sync:** database writes and event publishing are not atomic.
-- **Duplicate messages:** consumers are not idempotent, so a redelivered message could be processed twice.
-- **Limited tests:** current tests only verify that each service starts.
-- **Dev-only credentials:** the JWT secret, database passwords and RabbitMQ login are committed local defaults, so the system starts with one command for evaluation. In production they would be injected at runtime from a secrets manager or Kubernetes Secrets and never committed.
-
-Making event handling reliable is what I want to learn next, in a production setting.
-
-## AI assistance
-
-I designed and built the backend services myself as an individual exam project, with AI assistance. All architectural decisions, system design and business logic are my own. AI tools were also used for documentation, boilerplate code and commit messages. The React frontend was outside the exam scope and was generated with AI tools to make the system demonstrable.
